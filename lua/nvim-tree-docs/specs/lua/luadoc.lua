@@ -60,7 +60,7 @@ module.processors.param = {
     local result = {}
     for param in context.iter(context.parameters) do
       local name = context["get-text"](param.entry.name)
-      table.insert(result, "-- @param " .. name .. " The " .. name)
+      table.insert(result, "--- @param " .. name .. " The " .. name)
     end
     return result
   end,
