@@ -33,9 +33,9 @@ function M.get_text(context, node, default, multi)
     local bufnr = context.bufnr or vim.api.nvim_get_current_buf()
     local text = vim.treesitter.get_node_text(tsnode, bufnr)
     if multi then
-      return vim.split(text, '\n', { plain = true })
+      return vim.split(text, "\n", { plain = true })
     else
-      local lines = vim.split(text, '\n', { plain = true })
+      local lines = vim.split(text, "\n", { plain = true })
       local line = lines[1]
       if line and line ~= "" then
         return line
