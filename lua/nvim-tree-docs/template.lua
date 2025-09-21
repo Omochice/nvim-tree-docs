@@ -216,8 +216,12 @@ function M.get_filtered_slots(ps_list, processors, slot_config, context)
         and (proc_info.processor.implicit or slot_config[proc_info["aliased-from"] or proc_info.name])
     end)
     :map(function(proc_info)
-      local include_ps = utils.method(proc_info.processor, "when") and proc_info.processor.when(context)
-        or (not utils.method(proc_info.processor, "when") and is_table(proc_info.processor))
+      local include_ps
+      if utils.method(proc_info.processor, "when") then
+        include_ps = proc_info.processor.when(context)
+      else
+        include_ps = is_table(proc_info.processor)
+      end
       return include_ps and proc_info.name or nil
     end)
     :totable()
