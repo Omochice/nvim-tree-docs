@@ -1,207 +1,181 @@
-local _2afile_2a = "fnl/nvim-tree-docs/utils.fnl"
-local _2amodule_name_2a = "nvim-tree-docs.utils"
-local _2amodule_2a
-do
-  package.loaded[_2amodule_name_2a] = {}
-  _2amodule_2a = package.loaded[_2amodule_name_2a]
-end
-local _2amodule_locals_2a
-do
-  _2amodule_2a["aniseed/locals"] = {}
-  _2amodule_locals_2a = (_2amodule_2a)["aniseed/locals"]
-end
-local autoload = (require("nvim-tree-docs.aniseed.autoload")).autoload
-local core = autoload("nvim-tree-docs.aniseed.core")
-do end (_2amodule_locals_2a)["core"] = core
+-- Utility functions for nvim-tree-docs
+-- Provides helper functions for working with tree-sitter nodes, buffer content, and data structures
+
+local M = {}
+
+-- Namespace for highlighting
 local ns = vim.api.nvim_create_namespace("blorg")
-do end (_2amodule_2a)["ns"] = ns
-local function get_start_node(entry)
-  local function _2_()
-    local _3_ = entry
-    if (nil ~= _3_) then
-      local _4_ = (_3_).start_point
-      if (nil ~= _4_) then
-        return (_4_).node
-      else
-        return _4_
-      end
-    else
-      return _3_
-    end
-  end
-  local function _7_()
-    local _8_ = entry
-    if (nil ~= _8_) then
-      local _9_ = (_8_).definition
-      if (nil ~= _9_) then
-        return (_9_).node
-      else
-        return _9_
-      end
-    else
-      return _8_
-    end
-  end
-  return (_2_() or _7_())
+
+-- Helper functions for type checking
+local function is_table(v)
+  return type(v) == "table"
 end
-_2amodule_2a["get-start-node"] = get_start_node
-local function get_end_node(entry)
-  local function _12_()
-    local _13_ = entry
-    if (nil ~= _13_) then
-      local _14_ = (_13_).end_point
-      if (nil ~= _14_) then
-        return (_14_).node
-      else
-        return _14_
-      end
-    else
-      return _13_
-    end
-  end
-  local function _17_()
-    local _18_ = entry
-    if (nil ~= _18_) then
-      local _19_ = (_18_).definition
-      if (nil ~= _19_) then
-        return (_19_).node
-      else
-        return _19_
-      end
-    else
-      return _18_
-    end
-  end
-  return (_12_() or _17_())
+
+local function inc(x)
+  return x + 1
 end
-_2amodule_2a["get-end-node"] = get_end_node
-local function get_position(keys, default_position, entry)
+
+--- Get the start node from an entry
+--- @param entry table: Entry containing start_point or definition
+--- @return table?: Tree-sitter node if found
+function M.get_start_node(entry)
+  return (entry.start_point and entry.start_point.node) or (entry.definition and entry.definition.node)
+end
+
+--- Get the end node from an entry
+--- @param entry table: Entry containing end_point or definition
+--- @return table?: Tree-sitter node if found
+function M.get_end_node(entry)
+  return (entry.end_point and entry.end_point.node) or (entry.definition and entry.definition.node)
+end
+
+--- Generic position getter that searches through multiple keys
+--- @param keys table: List of keys to search in priority order
+--- @param default_position string: Default position type ("start" or "end")
+--- @param entry table: Entry to search in
+--- @return number, number, number: row, col, byte position
+function M.get_position(keys, default_position, entry)
   local i = 1
   local result = nil
-  while (not result and (i <= #keys)) do
-    do
-      local key = keys[i]
-      local match_3f = entry[key]
-      local has_match_3f = (core["table?"](match_3f) and match_3f.node)
-      local position_3f
-      if has_match_3f then
-        position_3f = (match_3f.position or default_position)
+
+  while not result and (i <= #keys) do
+    local key = keys[i]
+    local match = entry[key]
+    local has_match = is_table(match) and match.node
+    local position = has_match and (match.position or default_position) or nil
+
+    if has_match then
+      if position == "start" then
+        result = { match.node:start() }
       else
-        position_3f = nil
-      end
-      if has_match_3f then
-        if (position_3f == "start") then
-          result = {(match_3f.node):start()}
-        else
-          result = {(match_3f.node):end_()}
-        end
-      else
+        result = { match.node:end_() }
       end
     end
-    i = core.inc(i)
+    i = inc(i)
   end
-  return unpack(result)
+
+  return unpack(result or {})
 end
-_2amodule_2a["get-position"] = get_position
-local get_start_position
-do
-  local _25_ = {"start_point", "definition"}
-  local function _26_(...)
-    return get_position(_25_, "start", ...)
-  end
-  get_start_position = _26_
+
+--- Get start position from entry (checks start_point, then definition)
+--- @param entry table: Entry to get position from
+--- @return number, number, number: row, col, byte position
+function M.get_start_position(entry)
+  return M.get_position({ "start_point", "definition" }, "start", entry)
 end
-_2amodule_2a["get-start-position"] = get_start_position
-local get_end_position
-do
-  local _27_ = {"end_point", "definition"}
-  local function _28_(...)
-    return get_position(_27_, "end", ...)
-  end
-  get_end_position = _28_
+
+--- Get end position from entry (checks end_point, then definition)
+--- @param entry table: Entry to get position from
+--- @return number, number, number: row, col, byte position
+function M.get_end_position(entry)
+  return M.get_position({ "end_point", "definition" }, "end", entry)
 end
-_2amodule_2a["get-end-position"] = get_end_position
-local get_edit_start_position
-do
-  local _29_ = {"edit_start_point", "start_point", "definition"}
-  local function _30_(...)
-    return get_position(_29_, "start", ...)
-  end
-  get_edit_start_position = _30_
+
+--- Get edit start position (checks edit_start_point, start_point, then definition)
+--- @param entry table: Entry to get position from
+--- @return number, number, number: row, col, byte position
+function M.get_edit_start_position(entry)
+  return M.get_position({ "edit_start_point", "start_point", "definition" }, "start", entry)
 end
-_2amodule_2a["get-edit-start-position"] = get_edit_start_position
-local get_edit_end_position
-do
-  local _31_ = {"edit_end_point", "end_point", "definition"}
-  local function _32_(...)
-    return get_position(_31_, "end", ...)
-  end
-  get_edit_end_position = _32_
+
+--- Get edit end position (checks edit_end_point, end_point, then definition)
+--- @param entry table: Entry to get position from
+--- @return number, number, number: row, col, byte position
+function M.get_edit_end_position(entry)
+  return M.get_position({ "edit_end_point", "end_point", "definition" }, "end", entry)
 end
-_2amodule_2a["get-edit-end-position"] = get_edit_end_position
-local function get_bufnr(bufnr)
-  return (bufnr or vim.api.nvim_get_current_buf())
+
+--- Get buffer number, defaulting to current buffer
+--- @param bufnr number?: Buffer number
+--- @return number: Buffer number
+function M.get_bufnr(bufnr)
+  return bufnr or vim.api.nvim_get_current_buf()
 end
-_2amodule_2a["get-bufnr"] = get_bufnr
-local function get_buf_content(start_row, start_col, end_row, end_col, bufnr)
-  return vim.api.nvim_buf_get_lines(bufnr, start_row, (end_row + 1), false)
+
+--- Get buffer content between positions
+--- @param start_row number: Starting row
+--- @param start_col number: Starting column (unused but kept for API compatibility)
+--- @param end_row number: Ending row
+--- @param end_col number: Ending column (unused but kept for API compatibility)
+--- @param bufnr number: Buffer number
+--- @return table: Lines from buffer
+function M.get_buf_content(start_row, start_col, end_row, end_col, bufnr)
+  return vim.api.nvim_buf_get_lines(bufnr, start_row, end_row + 1, false)
 end
-_2amodule_2a["get-buf-content"] = get_buf_content
-local function get(path, tbl, default_3f)
+
+--- Get nested value from table using path
+--- @param path table|string: Path as array of keys or dot-separated string
+--- @param tbl table: Table to search in
+--- @param default any?: Default value if path not found
+--- @return any: Found value or default
+function M.get(path, tbl, default)
   local segments
-  if (type(path) == "string") then
+  if type(path) == "string" then
     segments = vim.split(path, "%.")
   else
     segments = path
   end
+
   local result = tbl
   for _, segment in ipairs(segments) do
-    if (type(result) == "table") then
+    if type(result) == "table" then
       result = result[segment]
     else
       result = nil
+      break
     end
   end
-  if (result == nil) then
-    return default_3f
-  else
-    return result
-  end
+
+  return result == nil and default or result
 end
-_2amodule_2a["get"] = get
-local function make_inverse_list(tbl)
+
+--- Create inverse mapping of array (value -> index)
+--- @param tbl table: Array to invert
+--- @return table: Inverted mapping
+function M.make_inverse_list(tbl)
   local result = {}
   for i, v in ipairs(tbl) do
     result[v] = i
   end
   return result
 end
-_2amodule_2a["make-inverse-list"] = make_inverse_list
-local function get_all_truthy_keys(tbl)
+
+--- Get all keys from table where value is truthy
+--- @param tbl table: Table to scan
+--- @return table: Array of truthy keys
+function M.get_all_truthy_keys(tbl)
   local result = {}
   for k, v in pairs(tbl) do
     if v then
       table.insert(result, k)
-    else
     end
   end
   return result
 end
-_2amodule_2a["get-all-truthy-keys"] = get_all_truthy_keys
-local function func_3f(v)
-  return (type(v) == "function")
+
+--- Check if value is a function
+--- @param v any: Value to check
+--- @return boolean: True if value is function
+function M.func(v)
+  return type(v) == "function"
 end
-_2amodule_2a["func?"] = func_3f
-local function method_3f(v, key)
-  return ((type(v) == "table") and (type(v[key]) == "function"))
+
+--- Check if value is a table with a method
+--- @param v any: Value to check
+--- @param key string: Method name to check for
+--- @return boolean: True if v is table and v[key] is function
+function M.method(v, key)
+  return type(v) == "table" and type(v[key]) == "function"
 end
-_2amodule_2a["method?"] = method_3f
-local function highlight_marks(marks, bufnr)
+
+--- Highlight marks in buffer for debugging
+--- @param marks table: Array of mark objects with line, start, stop
+--- @param bufnr number: Buffer number
+function M.highlight_marks(marks, bufnr)
   for _, mark in ipairs(marks) do
-    local line = (mark.line - 1)
-    vim.highlight.range(bufnr, ns, "Visual", {line, mark.start}, {line, mark.stop})
+    local line = mark.line - 1
+    vim.highlight.range(bufnr, ns, "Visual", { line, mark.start }, { line, mark.stop })
   end
-  return nil
 end
-_2amodule_2a["highlight-marks"] = highlight_marks
-return _2amodule_2a
+
+return M
