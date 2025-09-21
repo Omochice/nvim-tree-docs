@@ -1,0 +1,6 @@
+return {
+  default = {
+    pattern = "test/*.lua",
+    lpath = "./test/?.lua;./lua/?.lua",
+  }
+}
