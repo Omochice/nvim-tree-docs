@@ -10,10 +10,12 @@
 (template function
   description
   param
-  returns)
+  returns
+  %content%)
 
 (template variable
-  description)
+  description
+  %content%)
 
 (processor description
   implicit true
