@@ -50,12 +50,7 @@
               shfmt.enable = true;
               stylua = {
                 enable = true;
-                settings = {
-                  indent_type = "Spaces";
-                  indent_width = 2;
-                  quote_style = "AutoPreferDouble";
-                  call_parentheses = "Always";
-                };
+                settings = ./stylua.toml |> builtins.readFile |> builtins.fromTOML;
               };
               yamlfmt = {
                 enable = true;
