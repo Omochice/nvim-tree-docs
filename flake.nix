@@ -138,13 +138,13 @@
           formatting = treefmt.config.build.check self;
         };
         apps = {
-          check-action =
+          check-actions =
             ''
               actionlint
               ghalint run
               zizmor .github/workflows .github/actions
             ''
-            |> runAs "check-action" devPackages.actions;
+            |> runAs "check-actions" devPackages.actions;
           test =
             ''
               vusted test
