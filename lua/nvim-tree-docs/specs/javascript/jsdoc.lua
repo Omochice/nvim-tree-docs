@@ -22,7 +22,7 @@ local module = {
         generator = false,
         template = false,
         yields = false,
-        export = false,
+        export = true,
       },
       variable = {
         type = false,
