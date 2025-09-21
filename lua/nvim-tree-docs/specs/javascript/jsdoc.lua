@@ -232,7 +232,7 @@ module.processors.yields = {
 module.processors.description = {
   implicit = true,
   build = function(context, info)
-    local name = context["get-text"](context.name)
+    local name = context.name and context["get-text"](context.name) or "item"
     local description = module.__build(" * ", { content = "The " .. name .. " description", mark = "tabstop" })
     local next_ps = info.processors[info.index + 1]
 
