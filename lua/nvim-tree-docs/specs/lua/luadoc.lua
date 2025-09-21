@@ -9,8 +9,8 @@ do
   do end ((template_mod_2_auto)["loaded-specs"])[mod_name_1_auto] = module_3_auto
   _1_ = module_3_auto
 end
-(_1_).templates["function"] = {"description", "param", "returns"}
-(_1_).templates["variable"] = {"description"}
+(_1_).templates["function"] = {"description", "param", "returns", "%content%"}
+(_1_).templates["variable"] = {"description", "%content%"}
 local function _2_()
   return "--- Description"
 end
