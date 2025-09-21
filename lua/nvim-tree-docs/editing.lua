@@ -4,7 +4,6 @@
 local M = {}
 
 -- Module dependencies
-local ts_utils = require("nvim-treesitter.ts_utils")
 local tsq = vim.treesitter.query
 
 --- Namespace for highlighting editable regions
@@ -20,8 +19,7 @@ function M.get_doc_comment_data(args)
   local bufnr = args.bufnr
 
   -- Get the text content of the documentation node
-  local doc_lines = ts_utils.get_node_text(node, bufnr)
-  local doc_string = table.concat(doc_lines, "\n")
+  local doc_string = vim.treesitter.get_node_text(node, bufnr)
 
   -- Parse the documentation string with the documentation language parser
   local parser = vim.treesitter.get_string_parser(doc_string, doc_lang)
@@ -65,7 +63,7 @@ function M.edit_doc(args)
   -- Highlight each editable region
   for _, node in ipairs(edit_nodes) do
     local dsr, dsc, der, dec = node:range()
-    ts_utils.highlight_range({ dsr + sr, dsc, der + sr, dec }, bufnr, ns, "Visual")
+    vim.highlight.range(bufnr, ns, "Visual", { dsr + sr, dsc }, { der + sr, dec })
   end
 end
 

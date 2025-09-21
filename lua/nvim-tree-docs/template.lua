@@ -6,7 +6,6 @@ local M = {}
 -- Module dependencies
 local utils = require("nvim-tree-docs.utils")
 local collectors = require("nvim-tree-docs.collector")
-local ts_utils = require("nvim-treesitter.ts_utils")
 
 -- Storage for loaded language specifications
 local loaded_specs = {}
@@ -31,12 +30,14 @@ function M.get_text(context, node, default, multi)
   local default_value = default or ""
   if node and is_table(node) then
     local tsnode = node.node or node
-    local lines = ts_utils.get_node_text(tsnode)
+    local bufnr = context.bufnr or vim.api.nvim_get_current_buf()
+    local text = vim.treesitter.get_node_text(tsnode, bufnr)
     if multi then
-      return lines
+      return vim.split(text, '\n', { plain = true })
     else
+      local lines = vim.split(text, '\n', { plain = true })
       local line = lines[1]
-      if line ~= "" then
+      if line and line ~= "" then
         return line
       else
         return default_value

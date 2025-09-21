@@ -10,7 +10,6 @@ local collectors = require("nvim-tree-docs.collector")
 local editing = require("nvim-tree-docs.editing")
 local configs = require("nvim-treesitter.configs")
 local queries = require("nvim-treesitter.query")
-local ts_utils = require("nvim-treesitter.ts_utils")
 
 -- Language specifications mapping
 local language_specs = {
@@ -183,7 +182,7 @@ end
 --- Generate documentation for the node at cursor position
 --- @return boolean?: Success status
 function M.doc_node_at_cursor()
-  return M.doc_node(ts_utils.get_node_at_cursor())
+  return M.doc_node(vim.treesitter.get_node())
 end
 
 --- Get documentation entries based on position criteria
