@@ -6,7 +6,7 @@ describe("javascript jsdoc", function()
     local contents = {
       "function sample(a, b) {",
       "  return a + b;",
-      "}"
+      "}",
     }
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
     vim.treesitter.get_parser(bufnr, "javascript"):parse()
@@ -14,20 +14,18 @@ describe("javascript jsdoc", function()
 
     require("nvim-tree-docs.internal").doc_node_at_cursor()
 
-    assert.same(
-      {
-        "/**",
-        " * The sample description",
-        " * @function sample",
-        " * @param {any} a - The a param",
-        " * @param {any} b - The b param",
-        " * @returns {any} The result",
-        " */",
-        "function sample(a, b) {",
-        "  return a + b;",
-        "}",
-      }
-      , vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    assert.same({
+      "/**",
+      " * The sample description",
+      " * @function sample",
+      " * @param {any} a - The a param",
+      " * @param {any} b - The b param",
+      " * @returns {any} The result",
+      " */",
+      "function sample(a, b) {",
+      "  return a + b;",
+      "}",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
 
   it("should generate jsdoc for variable", function()
@@ -43,14 +41,12 @@ describe("javascript jsdoc", function()
 
     require("nvim-tree-docs.internal").doc_node_at_cursor()
 
-    assert.same(
-      {
-        "/**",
-        " * The sample description",
-        " */",
-        "const sample = 42;",
-      }
-      , vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    assert.same({
+      "/**",
+      " * The sample description",
+      " */",
+      "const sample = 42;",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
 
   it("should generate jsdoc for class", function()
@@ -68,17 +64,15 @@ describe("javascript jsdoc", function()
 
     require("nvim-tree-docs.internal").doc_node_at_cursor()
 
-    assert.same(
-      {
-        "/**",
-        " * The A description",
-        " * @class A",
-        " */",
-        "class A {",
-        "  foo = 42;",
-        "}",
-      }
-      , vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    assert.same({
+      "/**",
+      " * The A description",
+      " * @class A",
+      " */",
+      "class A {",
+      "  foo = 42;",
+      "}",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
 
   it("should generate jsdoc for method", function()
@@ -96,16 +90,14 @@ describe("javascript jsdoc", function()
 
     require("nvim-tree-docs.internal").doc_node_at_cursor()
 
-    assert.same(
-      {
-        "class A {",
-        "  /**",
-        "   * The foo description",
-        "   * @memberof A",
-        "   */",
-        "  foo = 42;",
-        "}",
-      }
-      , vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    assert.same({
+      "class A {",
+      "  /**",
+      "   * The foo description",
+      "   * @memberof A",
+      "   */",
+      "  foo = 42;",
+      "}",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
 end)
