@@ -12,7 +12,7 @@ describe("typescript jsdoc", function()
     vim.treesitter.get_parser(bufnr, "typescript"):parse()
     vim.api.nvim_win_set_cursor(0, { 1, 9 })
 
-    require("nvim-tree-docs.internal").doc_node_at_cursor()
+    require("nvim-tree-docs").doc_node_at_cursor()
 
     assert.same({
       "/**",
@@ -39,7 +39,7 @@ describe("typescript jsdoc", function()
     vim.treesitter.get_parser(bufnr, "typescript"):parse()
     vim.api.nvim_win_set_cursor(0, { 1, 13 })
 
-    require("nvim-tree-docs.internal").doc_node_at_cursor()
+    require("nvim-tree-docs").doc_node_at_cursor()
 
     assert.same({
       "/**",
@@ -62,7 +62,7 @@ describe("typescript jsdoc", function()
     vim.treesitter.get_parser(bufnr, "typescript"):parse()
     vim.api.nvim_win_set_cursor(0, { 1, 7 })
 
-    require("nvim-tree-docs.internal").doc_node_at_cursor()
+    require("nvim-tree-docs").doc_node_at_cursor()
 
     assert.same({
       "/**",
@@ -87,7 +87,7 @@ describe("typescript jsdoc", function()
     vim.treesitter.get_parser(bufnr, "typescript"):parse()
     vim.api.nvim_win_set_cursor(0, { 2, 3 })
 
-    require("nvim-tree-docs.internal").doc_node_at_cursor()
+    require("nvim-tree-docs").doc_node_at_cursor()
 
     assert.same({
       "class A {",

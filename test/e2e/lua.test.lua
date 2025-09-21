@@ -12,7 +12,7 @@ describe("lua luadoc", function()
     vim.treesitter.get_parser(bufnr, "lua"):parse()
     vim.api.nvim_win_set_cursor(0, { 1, 17 })
 
-    require("nvim-tree-docs.internal").doc_node_at_cursor()
+    require("nvim-tree-docs").doc_node_at_cursor()
 
     assert.same({
       "--- Description",
@@ -35,7 +35,7 @@ describe("lua luadoc", function()
     vim.treesitter.get_parser(bufnr, "lua"):parse()
     vim.api.nvim_win_set_cursor(0, { 1, 7 })
 
-    require("nvim-tree-docs.internal").doc_node_at_cursor()
+    require("nvim-tree-docs").doc_node_at_cursor()
 
     assert.same({
       "--- Description",
