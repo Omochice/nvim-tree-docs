@@ -99,7 +99,7 @@
               echo "${init-vim}" > $out/init.vim
             '';
         };
-        wrapperdVusted = pkgs.symlinkJoin {
+        wrappedVusted = pkgs.symlinkJoin {
           name = "vusted-custom";
           paths = [ pkgs.lua51Packages.vusted ];
           nativeBuildInputs = [ pkgs.makeWrapper ];
@@ -117,8 +117,8 @@
           ];
           neovim = [
             pkgs.neovim
-            pkgs.lua51Packages.luarocks-nix
-            wrapperdVusted
+            # pkgs.lua51Packages.luarocks-nix
+            wrappedVusted
           ];
           renovate = [
             pkgs.renovate
