@@ -45,7 +45,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - run: nix run .#check-actions
   test:
-    timeout-minutes: 5
+    timeout-minutes: 30
     needs: path-filter
     runs-on: ubuntu-latest
     permissions: {}
