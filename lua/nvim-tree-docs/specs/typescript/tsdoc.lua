@@ -18,7 +18,6 @@ local module = {
         export = false,
         generator = false,
         ["function"] = false,
-        yields = false,
       },
       variable = {
         type = false,
