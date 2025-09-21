@@ -6,15 +6,6 @@ local M = {}
 -- Namespace for highlighting
 local ns = vim.api.nvim_create_namespace("blorg")
 
--- Helper functions for type checking
-local function is_table(v)
-  return type(v) == "table"
-end
-
-local function inc(x)
-  return x + 1
-end
-
 --- Get the start node from an entry
 --- @param entry table: Entry containing start_point or definition
 --- @return table?: Tree-sitter node if found
@@ -41,7 +32,7 @@ function M.get_position(keys, default_position, entry)
   while not result and (i <= #keys) do
     local key = keys[i]
     local match = entry[key]
-    local has_match = is_table(match) and match.node
+    local has_match = type(match) == "table" and match.node
     local position = has_match and (match.position or default_position) or nil
 
     if has_match then
@@ -51,7 +42,7 @@ function M.get_position(keys, default_position, entry)
         result = { match.node:end_() }
       end
     end
-    i = inc(i)
+    i = i + 1
   end
 
   return unpack(result or {})
@@ -153,19 +144,12 @@ function M.get_all_truthy_keys(tbl)
   return result
 end
 
---- Check if value is a function
---- @param v any: Value to check
---- @return boolean: True if value is function
-function M.func(v)
-  return type(v) == "function"
-end
-
 --- Check if value is a table with a method
 --- @param v any: Value to check
 --- @param key string: Method name to check for
 --- @return boolean: True if v is table and v[key] is function
 function M.method(v, key)
-  return type(v) == "table" and type(v[key]) == "function"
+  return type(v) == "table" and vim.is_callable(v[key])
 end
 
 --- Highlight marks in buffer for debugging

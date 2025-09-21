@@ -12,10 +12,6 @@ local loaded_specs = {}
 M.loaded_specs = loaded_specs -- Expose for registration by specs
 
 -- Helper functions to replace Aniseed core functions
-local function is_string(v)
-  return type(v) == "string"
-end
-
 local function is_table(v)
   return type(v) == "table"
 end
@@ -87,9 +83,11 @@ function M.build_line(...)
   end
 
   for _, value in ipairs({ ... }) do
-    if is_string(value) then
+    if type(value) == "string" then
+      --- @cast value string
       add_content(value)
-    elseif is_table(value) and is_string(value.content) then
+    elseif is_table(value) and type(value.content) == "string" then
+      --- @cast value { content: string, mark: string? }
       if value.mark then
         local start = #result.content
         add_content(value.content)
@@ -149,9 +147,11 @@ end
 --- @param processor function|table: Processor to normalize
 --- @return table: Normalized processor
 local function normalize_processor(processor)
-  if utils.func(processor) then
+  if vim.is_callable(processor) then
+    --- @cast processor function
     return { build = processor }
   else
+    --- @cast processor table
     return processor
   end
 end
@@ -163,7 +163,8 @@ end
 --- @return table: Processor info
 local function get_processor(processors, name, aliased_from)
   local processor_config = processors[name]
-  if is_string(processor_config) then
+  if type(processor_config) == "string" then
+    --- @cast processor_config string
     return get_processor(processors, processor_config, aliased_from or name)
   else
     local result = normalize_processor(processor_config or processors.__default)
@@ -231,16 +232,17 @@ end
 --- @param output any: Build output
 --- @return table: Normalized output
 function M.normalize_build_output(output)
-  if is_string(output) then
+  if type(output) == "string" then
     return { { content = output, marks = {} } }
   elseif is_table(output) then
-    if is_string(output.content) then
+    if type(output.content) == "string" then
+      --- @cast output { content: string }
       return { output }
     else
       return vim
         .iter(output)
         :map(function(item)
-          return is_string(item) and { content = item, marks = {} } or item
+          return type(item) == "string" and { content = item, marks = {} } or item
         end)
         :totable()
     end
@@ -255,7 +257,8 @@ end
 --- @return table: Indented lines
 function M.indent_lines(lines, indenter, context)
   local indentation_amount
-  if utils.func(indenter) then
+  if vim.is_callable(indenter) then
+    --- @cast indenter function
     indentation_amount = indenter(lines, context)
   else
     indentation_amount = context["start-col"]
@@ -295,7 +298,8 @@ function M.build_slots(ps_list, processors, context)
     local indent_fn = (processor and processor.indent) or (default_processor and default_processor.indent)
 
     local slot_result
-    if utils.func(build_fn) then
+    if vim.is_callable(build_fn) then
+      --- @cast build_fn function
       slot_result = M.indent_lines(
         M.normalize_build_output(build_fn(context, {
           processors = ps_list,
