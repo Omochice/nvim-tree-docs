@@ -216,7 +216,7 @@ function M.get_filtered_slots(ps_list, processors, slot_config, context)
     end)
     :map(function(proc_info)
       local include_ps = utils.method(proc_info.processor, "when") and proc_info.processor.when(context)
-        or is_table(proc_info.processor)
+        or (not utils.method(proc_info.processor, "when") and is_table(proc_info.processor))
       return include_ps and proc_info.name or nil
     end)
     :totable()
