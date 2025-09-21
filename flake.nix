@@ -12,6 +12,7 @@
       url = "github:Omochice/nur-packages";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
   outputs =
@@ -21,6 +22,7 @@
       treefmt-nix,
       flake-utils,
       nur-packages,
+      neovim-nightly-overlay,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -29,6 +31,7 @@
           inherit system;
           overlays = [
             nur-packages.overlays.default
+            neovim-nightly-overlay.overlays.default
           ];
         };
         treefmt = treefmt-nix.lib.evalModule pkgs (
@@ -78,6 +81,38 @@
             type = "app";
             program = "${program}/bin/${name}";
           };
+        nvim-treesitter = (
+          pkgs.symlinkJoin {
+            name = "nvim-treesitter";
+            paths = [
+              pkgs.vimPlugins.nvim-treesitter
+            ]
+            ++ pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
+          }
+        );
+        customInitVim = pkgs.stdenvNoCC.mkDerivation {
+          name = "init-vim";
+          src = ./.;
+          buildCommand =
+            let
+              init-vim = ''
+                set runtimepath+=${nvim-treesitter}
+              '';
+            in
+            ''
+              mkdir -p $out
+              echo "${init-vim}" > $out/init.vim
+            '';
+        };
+        wrapperdVusted = pkgs.symlinkJoin {
+          name = "vusted-custom";
+          paths = [ pkgs.lua51Packages.vusted ];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          postBuild = ''
+            wrapProgram $out/bin/vusted \
+              --set VUSTED_ARGS "--headless --clean -u ${customInitVim}/init.vim"
+          '';
+        };
         devPackages = rec {
           # keep-sorted start block=yes
           actions = [
@@ -85,11 +120,16 @@
             pkgs.ghalint
             pkgs.zizmor
           ];
+          neovim = [
+            pkgs.neovim
+            pkgs.lua51Packages.luarocks-nix
+            wrapperdVusted
+          ];
           renovate = [
             pkgs.renovate
           ];
           # keep-sorted end
-          default = actions ++ renovate ++ [ treefmt.config.build.wrapper ];
+          default = actions ++ renovate ++ neovim ++ [ treefmt.config.build.wrapper ];
         };
       in
       {
@@ -105,6 +145,11 @@
               zizmor .github/workflows .github/actions
             ''
             |> runAs "check-action" devPackages.actions;
+          test =
+            ''
+              vusted test
+            ''
+            |> runAs "vusted-test" devPackages.neovim;
         };
         devShells =
           devPackages
