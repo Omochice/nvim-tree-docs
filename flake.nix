@@ -50,12 +50,7 @@
               shfmt.enable = true;
               stylua = {
                 enable = true;
-                settings = {
-                  indent_type = "Spaces";
-                  indent_width = 2;
-                  quote_style = "AutoPreferDouble";
-                  call_parentheses = "Always";
-                };
+                settings = ./stylua.toml |> builtins.readFile |> builtins.fromTOML;
               };
               yamlfmt = {
                 enable = true;
@@ -104,7 +99,7 @@
               echo "${init-vim}" > $out/init.vim
             '';
         };
-        wrapperdVusted = pkgs.symlinkJoin {
+        wrappedVusted = pkgs.symlinkJoin {
           name = "vusted-custom";
           paths = [ pkgs.lua51Packages.vusted ];
           nativeBuildInputs = [ pkgs.makeWrapper ];
@@ -122,8 +117,8 @@
           ];
           neovim = [
             pkgs.neovim
-            pkgs.lua51Packages.luarocks-nix
-            wrapperdVusted
+            # pkgs.lua51Packages.luarocks-nix
+            wrappedVusted
           ];
           renovate = [
             pkgs.renovate

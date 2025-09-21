@@ -1,12 +1,56 @@
-local _2afile_2a = "fnl/nvim-tree-docs/specs/typescript/tsdoc.fnl"
-local _1_
-do
-  local mod_name_1_auto = ("typescript" .. "." .. "tsdoc")
-  local template_mod_2_auto = require("nvim-tree-docs.template")
-  local module_3_auto = {__build = template_mod_2_auto["build-line"], config = vim.tbl_deep_extend("force", {processors = {}, slots = {}}, {empty_line_after_description = true, slots = {["function"] = {export = false, ["function"] = false, generator = false}, variable = {export = false, type = false}, class = {export = false, class = false, extends = false}, member = {memberof = false, type = false}, method = {memberof = false}}, include_types = false}), ["doc-lang"] = "nil", inherits = nil, lang = "typescript", module = mod_name_1_auto, processors = {}, spec = "tsdoc", templates = {}, utils = {}}
-  template_mod_2_auto["extend-spec"](module_3_auto, "base.base")
-  template_mod_2_auto["extend-spec"](module_3_auto, "javascript.jsdoc")
-  do end ((template_mod_2_auto)["loaded-specs"])[mod_name_1_auto] = module_3_auto
-  _1_ = module_3_auto
-end
-return nil
+-- TSDoc specification for TypeScript
+-- Extends JSDoc with TypeScript-specific configuration
+
+local template_mod = require("nvim-tree-docs.template")
+
+-- Create the TypeScript TSDoc specification module
+local mod_name = "typescript.tsdoc"
+local module = {
+  __build = template_mod.build_line,
+  config = vim.tbl_deep_extend("force", {
+    processors = {},
+    slots = {},
+  }, {
+    include_types = false,
+    empty_line_after_description = true,
+    slots = {
+      ["function"] = {
+        export = false,
+        generator = false,
+        ["function"] = false,
+        yields = true,
+      },
+      variable = {
+        type = false,
+        export = false,
+      },
+      class = {
+        class = false,
+        export = false,
+        extends = false,
+      },
+      member = {
+        memberof = false,
+        type = false,
+      },
+      method = {
+        memberof = false,
+      },
+    },
+  }),
+  ["doc-lang"] = nil,
+  inherits = nil,
+  lang = "typescript",
+  module = mod_name,
+  processors = {},
+  spec = "tsdoc",
+  templates = {},
+  utils = {},
+}
+
+-- Extend with base and JavaScript JSDoc
+template_mod.extend_spec(module, "base.base")
+template_mod.extend_spec(module, "javascript.jsdoc")
+
+-- Register this module
+template_mod.loaded_specs[mod_name] = module
