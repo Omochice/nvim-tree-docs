@@ -46,6 +46,7 @@
                 indent = 2;
               };
               keep-sorted.enable = true;
+              mdformat.enable = true;
               nixfmt.enable = true;
               shfmt.enable = true;
               stylua = {
