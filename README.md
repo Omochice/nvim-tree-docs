@@ -39,7 +39,7 @@ require("nvim-tree-docs").setup({
 
 Export them as:
 
-- `require("nvim-tree-docs").docs_node_at_cursor()`
+- `require("nvim-tree-docs").doc_node_at_cursor()`
 - `require("nvim-tree-docs").doc_all_in_range()`
 
 ## Advanced configuration
