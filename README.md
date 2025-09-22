@@ -55,7 +55,7 @@ There three key components to how this plugin operates.
 - `processors` -> Processors generate lines of content within a template.
 - `slots` -> Slots are positions where a processor can output it's content.
 - `templates` -> Templates are a list of slots, basically the ordering of processors.
-                 These are by `kind` (Ex: function).
+  These are by `kind` (Ex: function).
 - `specs` -> Specs are a collection of templates and processors (Ex: jsdoc).
 
 ### Basic example
@@ -220,13 +220,12 @@ class Person {}
 
 Note, in the above example, if we would have left out the `custom` slot in the template, it would not have output anything.
 
-
 #### Builtin processors
 
 There are some builtin processors that work across all specs (unless overridden, which is possible).
 
 - `%content%` -> This will output the content line, in our case above it would be the class declaration line.
-                 This makes it possible to wrap or put the documentation below the content line.
+  This makes it possible to wrap or put the documentation below the content line.
 - `%rest%` -> This will output all slots that are enabled, but do not have an explicit slot in the template.
 
 ### Template context
