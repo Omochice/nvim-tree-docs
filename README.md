@@ -1,5 +1,8 @@
 # nvim-tree-docs
 
+> [!NOTE]
+> This plugin requires nvim-treesitter's `main` branch.
+
 Highly configurable documentation generator using treesitter.
 
 This plugin is experimental!
@@ -9,16 +12,14 @@ This plugin is experimental!
 nvim-tree-docs is a module for the `nvim-treesitter` plugin. You can install both by doing (vim-plug):
 
 ```vim
-Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'main' }
 Plug 'nvim-treesitter/nvim-tree-docs'
 ```
 
-You can configure `nvim-tree-docs` as part of your `nvim-treesitter` configuration.
+You can configure with `setup()` function.
 
 ```lua
-require("nvim-treesitter.configs").setup({
-  tree_docs = { enable = true },
-})
+require("nvim-tree-docs").setup()
 ```
 
 ## Usage
@@ -28,7 +29,18 @@ There are two key bindings provided by default:
 - `doc_node_at_cursor`: `gdd`
 - `doc_all_in_range`: `gdd` (Visual)
 
-These can be configured through the `keymap` option in the config.
+If you want disable them, you can configure:
+
+```lua
+require("nvim-tree-docs").setup({
+  disable_default_mappings = true
+})
+```
+
+Export them as:
+
+- `require("nvim-tree-docs").doc_node_at_cursor()`
+- `require("nvim-tree-docs").doc_all_in_range()`
 
 ## Advanced configuration
 
@@ -43,7 +55,7 @@ There three key components to how this plugin operates.
 - `processors` -> Processors generate lines of content within a template.
 - `slots` -> Slots are positions where a processor can output it's content.
 - `templates` -> Templates are a list of slots, basically the ordering of processors.
-                 These are by `kind` (Ex: function).
+  These are by `kind` (Ex: function).
 - `specs` -> Specs are a collection of templates and processors (Ex: jsdoc).
 
 ### Basic example
@@ -80,14 +92,11 @@ You can enable the `author` slot to generate an author tag.
 This is done in the configuration for the spec.
 
 ```lua
-require("nvim-treesitter.configs").setup({
-  tree_docs = {
-    enable = true,
-    spec_config = {
-      jsdoc = {
-        slots = {
-          class = { author = true },
-        },
+require("nvim-tree-docs").setup({
+  spec_config = {
+    jsdoc = {
+      slots = {
+        class = { author = true },
       },
     },
   },
@@ -109,19 +118,16 @@ of jsdoc, just generates a tag. What if we could modify the behavior of that pro
 We can configure author processor in the same config.
 
 ```lua
-require("nvim-treesitter.configs").setup({
-  tree_docs = {
-    enable = true,
-    spec_config = {
-      jsdoc = {
-        slots = {
-          class = { author = true },
-        },
-        processors = {
-          author = function()
-            return " * @author Steven Sojka"
-          end,
-        },
+require("nvim-tree-docs").setup({
+  spec_config = {
+    jsdoc = {
+      slots = {
+        class = { author = true },
+      },
+      processors = {
+        author = function()
+          return " * @author Steven Sojka"
+        end,
       },
     },
   },
@@ -144,23 +150,20 @@ an issue ticket number. If the user doesn't enter anything
 the tag won't get generated.
 
 ```lua
-require("nvim-treesitter.configs").setup({
-  tree_docs = {
-    enable = true,
-    spec_config = {
-      jsdoc = {
-        slots = {
-          class = { see = true, author = true },
-        },
-        processors = {
-          author = function()
-            return " * @author Steven Sojka"
-          end,
-          see = function()
-            local ticket = vim.fn.input("Ticket: ")
-            return ticket ~= "" and (" * @see " .. ticket) or {}
-          end,
-        },
+require("nvim-tree-docs").setup({
+  spec_config = {
+    jsdoc = {
+      slots = {
+        class = { see = true, author = true },
+      },
+      processors = {
+        author = function()
+          return " * @author Steven Sojka"
+        end,
+        see = function()
+          local ticket = vim.fn.input("Ticket: ")
+          return ticket ~= "" and (" * @see " .. ticket) or {}
+        end,
       },
     },
   },
@@ -184,22 +187,19 @@ Templates aren't traditional templates. It's basically just a set of slots in a 
 You can configure the template in the config.
 
 ```lua
-require("nvim-treesitter.configs").setup({
-  tree_docs = {
-    enable = true,
-    spec_config = {
-      jsdoc = {
-        slots = {
-          class = { custom = true, author = true },
-        },
-        templates = {
-          class = {
-            "doc-start", -- Note, these are implicit slots and can't be turned off and vary between specs.
-            "custom",
-            "author",
-            "doc-end",
-            "%content%",
-          },
+require("nvim-tree-docs").setup({
+  spec_config = {
+    jsdoc = {
+      slots = {
+        class = { custom = true, author = true },
+      },
+      templates = {
+        class = {
+          "doc-start", -- Note, these are implicit slots and can't be turned off and vary between specs.
+          "custom",
+          "author",
+          "doc-end",
+          "%content%",
         },
       },
     },
@@ -220,13 +220,12 @@ class Person {}
 
 Note, in the above example, if we would have left out the `custom` slot in the template, it would not have output anything.
 
-
 #### Builtin processors
 
 There are some builtin processors that work across all specs (unless overridden, which is possible).
 
 - `%content%` -> This will output the content line, in our case above it would be the class declaration line.
-                 This makes it possible to wrap or put the documentation below the content line.
+  This makes it possible to wrap or put the documentation below the content line.
 - `%rest%` -> This will output all slots that are enabled, but do not have an explicit slot in the template.
 
 ### Template context

@@ -8,7 +8,7 @@ local utils = require("nvim-tree-docs.utils")
 local templates = require("nvim-tree-docs.template")
 local collectors = require("nvim-tree-docs.collector")
 local editing = require("nvim-tree-docs.editing")
-local configs = require("nvim-treesitter.configs")
+local configure = require("nvim-tree-docs.configure")
 local queries = require("nvim-treesitter.query")
 
 -- Language specifications mapping
@@ -38,7 +38,7 @@ end
 --- @return table: The merged configuration
 function M.get_spec_config(lang, spec)
   local spec_def = templates.get_spec(lang, spec)
-  local module_config = configs.get_module("tree_docs")
+  local module_config = configure.get()
   local spec_default_config = spec_def.config
   local lang_config = utils.get({ "lang_config", lang, spec }, module_config, {})
   local spec_config = utils.get({ "spec_config", spec }, module_config, {})
@@ -289,26 +289,28 @@ function M.edit_doc_at_cursor()
   return nil
 end
 
+local mappings = {
+  { name = "doc_node_at_cursor", mode = "n", desc = "Document node at cursor", keymap = "gdd" },
+  { name = "doc_all_in_range", mode = "v", desc = "Document all nodes in range", keymap = "gdd" },
+  { name = "edit_doc_at_cursor", mode = "n", desc = "Edit documentation at cursor", keymap = "gde" },
+}
+
 --- Attach keymaps to a buffer
 --- @param bufnr number?: Buffer number (defaults to current buffer)
 function M.attach(bufnr)
-  bufnr = utils.get_bufnr(bufnr)
-  local config = configs.get_module("tree_docs")
-
-  for fn_name, mapping in pairs(config.keymaps) do
-    local mode = "n"
-    if fn_name == "doc_all_in_range" then
-      mode = "v"
-    end
-
-    if mapping then
-      vim.api.nvim_buf_set_keymap(
-        bufnr,
-        mode,
-        mapping,
-        string.format(":lua require('nvim-tree-docs.internal').%s()<CR>", fn_name),
-        { silent = true }
-      )
+  local bufnr = utils.get_bufnr(bufnr)
+  local config = configure.get()
+  for _, map in ipairs(mappings) do
+    local map_name = string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-"))
+    vim.api.nvim_buf_set_keymap(
+      bufnr,
+      map.mode,
+      map_name,
+      string.format("<Cmd>lua require('nvim-tree-docs.internal').%s()<CR>", map.name),
+      { noremap = true, desc = map.desc }
+    )
+    if not config.disable_default_mappings then
+      vim.api.nvim_buf_set_keymap(bufnr, map.mode, map.keymap, map_name, { noremap = true, desc = map.desc })
     end
   end
 end
@@ -317,16 +319,19 @@ end
 --- @param bufnr number?: Buffer number (defaults to current buffer)
 function M.detach(bufnr)
   bufnr = utils.get_bufnr(bufnr)
-  local config = configs.get_module("tree_docs")
-
-  for fn_name, mapping in pairs(config.keymaps) do
-    local mode = "n"
-    if fn_name == "doc_all_in_range" then
-      mode = "v"
+  local config = configure.get()
+  local k = vim:iter(vim.api.nvim_buf_get_keymap(bufnr, "nv"))
+  for _, map in ipairs(mappings) do
+    local lhs = string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-"))
+    if k:any(function(m)
+      return m.mode == map.mode and m.lhs == lhs
+    end) then
+      vim.api.nvim_buf_del_keymap(bufnr, map.mode, lhs)
     end
-
-    if mapping then
-      vim.api.nvim_buf_del_keymap(bufnr, mode, mapping)
+    if k:any(function(m)
+      return m.mode == map.mode and m.lhs == map.keymap
+    end) then
+      vim.api.nvim_buf_del_keymap(bufnr, map.mode, map.keymap)
     end
   end
 end
