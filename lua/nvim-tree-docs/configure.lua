@@ -1,6 +1,6 @@
 local M = {}
 
---- @alias SpecConfig { slots?: { [string]: boolean }, processors?: { [string]: fun(): string } }
+--- @alias SpecConfig { slots?: { [string]: boolean }, processors?: { [string]: fun(): string | string[] } }
 --- @alias LangConfig { [string]: SpecConfig }
 --- @alias Option {lang_config?: {[string]: LangConfig }, spec_config?: { [string]: SpecConfig },  disable_default_mappings: boolean }
 
