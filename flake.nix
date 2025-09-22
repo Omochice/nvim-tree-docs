@@ -141,6 +141,11 @@
               zizmor .github/workflows .github/actions
             ''
             |> runAs "check-actions" devPackages.actions;
+          check-renovate-config =
+            ''
+              renovate-config-validator --strict renovate.json5
+            ''
+            |> runAs "check-renovate-config" devPackages.renovate;
           test =
             ''
               vusted test
