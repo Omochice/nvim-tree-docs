@@ -326,20 +326,12 @@ function M.detach(bufnr)
     if k:any(function(m)
       return m.mode == map.mode and m.lhs == lhs
     end) then
-      vim.api.nvim_buf_del_keymap(
-        bufnr,
-        map.mode,
-        string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-"))
-      )
+      vim.api.nvim_buf_del_keymap(bufnr, map.mode, string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-")))
     end
     if k:any(function(m)
       return m.mode == map.mode and m.lhs == map.keymap
     end) then
-      vim.api.nvim_buf_del_keymap(
-        bufnr,
-        map.mode,
-        map.keymap
-      )
+      vim.api.nvim_buf_del_keymap(bufnr, map.mode, map.keymap)
     end
   end
 end
