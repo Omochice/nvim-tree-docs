@@ -16,8 +16,8 @@ describe("lua luadoc", function()
 
     assert.same({
       "--- Description",
-      "-- @param a The a",
-      "-- @param b The b",
+      "--- @param a The a",
+      "--- @param b The b",
       "local function sample(a, b)",
       "  return a + b",
       "end",
