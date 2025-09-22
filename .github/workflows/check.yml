@@ -104,6 +104,7 @@ jobs:
     needs:
       - check-actions
       - check-format
+      - check-renovate-config
       - test
     permissions: {}
     if: failure()
