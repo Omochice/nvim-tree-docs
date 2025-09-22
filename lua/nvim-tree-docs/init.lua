@@ -30,8 +30,9 @@ function M.setup(opts)
   })
 
   local bufnr = vim.api.nvim_get_current_buf()
-  if not require("nvim-tree-docs.configure").get().disable_default_mappings and
-      is_supported(vim.bo[bufnr].filetype)
+  if
+    not require("nvim-tree-docs.configure").get().disable_default_mappings
+    and is_supported(vim.bo[bufnr].filetype)
   then
     require("nvim-tree-docs.internal").attach(bufnr)
   end

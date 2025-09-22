@@ -310,13 +310,7 @@ function M.attach(bufnr)
       { noremap = true, desc = map.desc }
     )
     if not config.disable_default_mappings then
-      vim.api.nvim_buf_set_keymap(
-        bufnr,
-        map.mode,
-        map.keymap,
-        map_name,
-        { noremap = true, desc = map.desc }
-      )
+      vim.api.nvim_buf_set_keymap(bufnr, map.mode, map.keymap, map_name, { noremap = true, desc = map.desc })
     end
   end
 end
@@ -330,7 +324,9 @@ function M.detach(bufnr)
   -- vim.print(k:totable())
   for _, map in ipairs(mappings) do
     local lhs = string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-"))
-    if k:any(function(m) return m.mode == map.mode and m.lhs == lhs end) then
+    if k:any(function(m)
+      return m.mode == map.mode and m.lhs == lhs
+    end) then
       vim.api.nvim_buf_del_keymap(
         bufnr,
         -- vim.api.nvim_del_keymap(
@@ -338,11 +334,15 @@ function M.detach(bufnr)
         string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-"))
       )
     end
-    if k:any(function(m) return m.mode == map.mode and m.lhs == map.keymap end) then
+    if k:any(function(m)
+      return m.mode == map.mode and m.lhs == map.keymap
+    end) then
       vim.api.nvim_buf_del_keymap(
         bufnr,
         -- vim.api.nvim_del_keymap(
-        map.mode, map.keymap)
+        map.mode,
+        map.keymap
+      )
     end
   end
 end
