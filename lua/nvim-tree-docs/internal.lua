@@ -321,7 +321,6 @@ function M.detach(bufnr)
   bufnr = utils.get_bufnr(bufnr)
   local config = configure.get()
   local k = vim:iter(vim.api.nvim_buf_get_keymap(bufnr, "nv"))
-  -- vim.print(k:totable())
   for _, map in ipairs(mappings) do
     local lhs = string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-"))
     if k:any(function(m)
@@ -329,7 +328,6 @@ function M.detach(bufnr)
     end) then
       vim.api.nvim_buf_del_keymap(
         bufnr,
-        -- vim.api.nvim_del_keymap(
         map.mode,
         string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-"))
       )
@@ -339,7 +337,6 @@ function M.detach(bufnr)
     end) then
       vim.api.nvim_buf_del_keymap(
         bufnr,
-        -- vim.api.nvim_del_keymap(
         map.mode,
         map.keymap
       )
