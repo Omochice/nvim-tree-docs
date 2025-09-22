@@ -1,5 +1,4 @@
-nvim-tree-docs
-==============
+# nvim-tree-docs
 
 Highly configurable documentation generator using treesitter.
 
