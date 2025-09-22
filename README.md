@@ -1,5 +1,4 @@
-nvim-tree-docs
-==============
+# nvim-tree-docs
 
 Highly configurable documentation generator using treesitter.
 
@@ -17,9 +16,9 @@ Plug 'nvim-treesitter/nvim-tree-docs'
 You can configure `nvim-tree-docs` as part of your `nvim-treesitter` configuration.
 
 ```lua
-require "nvim-treesitter.configs".setup {
-  tree_docs = {enable = true}
-}
+require("nvim-treesitter.configs").setup({
+  tree_docs = { enable = true },
+})
 ```
 
 ## Usage
@@ -49,18 +48,18 @@ There three key components to how this plugin operates.
 
 ### Basic example
 
-Here is a basic example of how this works (psuedo code).
+Here is a basic example of how this works (pseudo code).
 
 ```lua
 local processors = {
   my_processor = function() -- The processor
     return "Output!!!"
-  end
+  end,
 }
 
 local template = { -- template
   "my_processor", -- slot
-  "my_processor"  -- slot
+  "my_processor", -- slot
 }
 ```
 
@@ -81,18 +80,18 @@ You can enable the `author` slot to generate an author tag.
 This is done in the configuration for the spec.
 
 ```lua
-require "nvim-treesitter.configs".setup {
+require("nvim-treesitter.configs").setup({
   tree_docs = {
     enable = true,
     spec_config = {
       jsdoc = {
         slots = {
-          class = {author = true}
-        }
-      }
-    }
-  }
-}
+          class = { author = true },
+        },
+      },
+    },
+  },
+})
 ```
 
 This will generate the following output.
@@ -110,23 +109,23 @@ of jsdoc, just generates a tag. What if we could modify the behavior of that pro
 We can configure author processor in the same config.
 
 ```lua
-require "nvim-treesitter.configs".setup {
+require("nvim-treesitter.configs").setup({
   tree_docs = {
     enable = true,
     spec_config = {
       jsdoc = {
         slots = {
-          class = {author = true}
+          class = { author = true },
         },
         processors = {
           author = function()
             return " * @author Steven Sojka"
-          end
-        }
-      }
-    }
-  }
-}
+          end,
+        },
+      },
+    },
+  },
+})
 ```
 
 This will generate.
@@ -145,25 +144,27 @@ an issue ticket number. If the user doesn't enter anything
 the tag won't get generated.
 
 ```lua
-require "nvim-treesitter.configs".setup {
+require("nvim-treesitter.configs").setup({
   tree_docs = {
     enable = true,
     spec_config = {
       jsdoc = {
         slots = {
-          class = {see = true, author = true}
+          class = { see = true, author = true },
         },
         processors = {
-          author = function() return " * @author Steven Sojka" end
+          author = function()
+            return " * @author Steven Sojka"
+          end,
           see = function()
             local ticket = vim.fn.input("Ticket: ")
-            return ticket ~= "" and (" * @see " .. ticket) or []
-          end
-        }
-      }
-    }
-  }
-}
+            return ticket ~= "" and (" * @see " .. ticket) or {}
+          end,
+        },
+      },
+    },
+  },
+})
 ```
 
 This will result in the following (assuming PROJ-X-123456 was inputted).
@@ -183,27 +184,27 @@ Templates aren't traditional templates. It's basically just a set of slots in a 
 You can configure the template in the config.
 
 ```lua
-require "nvim-treesitter.configs".setup {
+require("nvim-treesitter.configs").setup({
   tree_docs = {
     enable = true,
     spec_config = {
       jsdoc = {
         slots = {
-          class = {custom = true, author = true}
+          class = { custom = true, author = true },
         },
         templates = {
           class = {
-            "doc-start" -- Note, these are implicit slots and can't be turned off and vary between specs.
-            "custom"
-            "author"
-            "doc-end"
-            "%content%"
-          }
-        }
-      }
-    }
-  }
-}
+            "doc-start", -- Note, these are implicit slots and can't be turned off and vary between specs.
+            "custom",
+            "author",
+            "doc-end",
+            "%content%",
+          },
+        },
+      },
+    },
+  },
+})
 ```
 
 This will generate.
@@ -288,7 +289,7 @@ because both `@function.definition` tags match the same node at the same positio
 
 Kind queries can be nested to define multiple different node merge points. This can be done
 by providing multiple, nested definition tags. For example in function parameters. A nested `<kind>`
-can be thought of as a list of similiar items.
+can be thought of as a list of similar items.
 
 ### `@<kind>.start_point`
 
@@ -369,4 +370,4 @@ documentation to either parse, update, or remove with updated information.
 - Template marks
 - More doc specs
 - Doc commands that don't require a treesitter node (jsdoc modules)
-- Predifined processors that can be swapped in... (think promptable descriptions?)
+- Predefined processors that can be swapped in... (think promptable descriptions?)
