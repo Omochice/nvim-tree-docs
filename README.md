@@ -158,7 +158,7 @@ require("nvim-treesitter.configs").setup({
           end,
           see = function()
             local ticket = vim.fn.input("Ticket: ")
-            return ticket ~= "" and (" * @see " .. ticket) or ""
+            return ticket ~= "" and (" * @see " .. ticket) or {}
           end,
         },
       },
