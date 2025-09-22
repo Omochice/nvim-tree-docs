@@ -48,7 +48,7 @@ There three key components to how this plugin operates.
 
 ### Basic example
 
-Here is a basic example of how this works (psuedo code).
+Here is a basic example of how this works (pseudo code).
 
 ```lua
 local processors = {
@@ -289,7 +289,7 @@ because both `@function.definition` tags match the same node at the same positio
 
 Kind queries can be nested to define multiple different node merge points. This can be done
 by providing multiple, nested definition tags. For example in function parameters. A nested `<kind>`
-can be thought of as a list of similiar items.
+can be thought of as a list of similar items.
 
 ### `@<kind>.start_point`
 
@@ -370,4 +370,4 @@ documentation to either parse, update, or remove with updated information.
 - Template marks
 - More doc specs
 - Doc commands that don't require a treesitter node (jsdoc modules)
-- Predifined processors that can be swapped in... (think promptable descriptions?)
+- Predefined processors that can be swapped in... (think promptable descriptions?)
