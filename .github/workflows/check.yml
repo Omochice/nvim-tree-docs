@@ -97,6 +97,7 @@ jobs:
         uses: ./.github/actions/setup-nix
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
       - run: nix run .#test
   status-check:
     timeout-minutes: 5
