@@ -12,9 +12,8 @@ function M.setup(opts)
   vim.api.nvim_create_autocmd({ "FileType" }, {
     callback = function(args)
       require("nvim-tree-docs.internal").detach(args.buf)
-
       local lang = vim.treesitter.language.get_lang(args.match)
-      if is_supported(lang) then
+      if not is_supported(lang) then
         return
       end
       require("nvim-tree-docs.internal").attach(args.buf)
@@ -28,14 +27,6 @@ function M.setup(opts)
     end,
     group = group,
   })
-
-  local bufnr = vim.api.nvim_get_current_buf()
-  if
-    not require("nvim-tree-docs.configure").get().disable_default_mappings
-    and is_supported(vim.bo[bufnr].filetype)
-  then
-    require("nvim-tree-docs.internal").attach(bufnr)
-  end
 end
 
 function M.doc_node_at_cursor()
