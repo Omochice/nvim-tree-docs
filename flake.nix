@@ -143,7 +143,7 @@
             |> runAs "check-actions" devPackages.actions;
           check-renovate-config =
             ''
-              renovate-config-validator --strict renovate.json5
+              renovate-config-validator --strict renovate.json
             ''
             |> runAs "check-renovate-config" devPackages.renovate;
           test =
