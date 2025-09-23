@@ -49,7 +49,7 @@ This plugin aims to add total customization to the user.
 
 CORE CONCEPTS ~
 
-There three key components to how this plugin operates.
+There are three key components to how this plugin operates.
 
 - `processors`
 	Processors generate lines of content within a template.
