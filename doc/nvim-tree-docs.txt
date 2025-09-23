@@ -280,7 +280,7 @@ merged together.
 This is very important for function parameters where multiple matches need to
 be grouped under the same function definition.
 
-For example, that this javascript query.
+For example, this is JavaScript query.
 
 >scheme
     (function_declaration
@@ -320,7 +320,7 @@ indentation and position of the definition node (`@<kind>.definition`).
 This can be changed, if you need to keep the same definition node, but need a
 different start point to insert.
 
-For example, that this javascript query.
+For example, this is javaScript query.
 
 >scheme
     (function_declaration
@@ -357,7 +357,7 @@ For example, the end of a function signature.
 This is important, because it allows us to trigger docs on a multiline
 signature.
 
-For example, that this javascript query.
+For example, this is JavaScript query.
 
 >scheme
     (
