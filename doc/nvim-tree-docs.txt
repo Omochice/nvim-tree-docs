@@ -121,10 +121,9 @@ This will generate the following output.
 <
 
 Pretty cool… but this is using the default processor for the spec, which in
-the case of jsdoc, just generates a tag.
+the case of JSDoc, just generates a tag.
 What if we could modify the behavior of that processor? We can configure
 author processor in the same config.
-
 >lua
     require("nvim-tree-docs").setup({
       spec_config = {
