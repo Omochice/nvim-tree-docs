@@ -303,8 +303,8 @@ This will match both these functions.
 
 The key difference is one will have an `export` node associated with it.
 Both queries match the function that is exported but they get merged into a
-single data model because both `@function.
-definition` tags match the same node at the same position.
+single data model because both `@function.definition` tags match the same node
+at the same position.
 
 @<KIND>.<KIND>.DEFINITION ~
 
