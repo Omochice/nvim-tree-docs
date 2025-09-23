@@ -260,7 +260,7 @@ Query tag syntax is `@<kind>.<property>`
 The `<kind>` tag corresponds with a template in the language specific template
 file. Properties can be accessed within a processor as the first argument.
 
-For example, a simple processor that gets the name of a nod
+For example, a simple processor that gets the name of a node.
 
 >lua
     function(ctx) return ctx.get_text(ctx.name.node) end
