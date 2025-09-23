@@ -3,4 +3,5 @@
   extends: [
     "github>Omochice/personal-renovate-config",
   ],
+  forkProcessing: "enabled",
 }
