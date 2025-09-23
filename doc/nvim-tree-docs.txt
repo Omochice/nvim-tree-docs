@@ -231,7 +231,7 @@ Note, in the above example, if we would have left out the `custom` slot in the
 template, it would not have output anything.
 
 
-BUILTIN PROCESSORS
+BUILTIN PROCESSORS ~
 
 There are some builtin processors that work across all specs (unless
 overridden, which is possible).
