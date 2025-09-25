@@ -135,7 +135,7 @@ local function collect_docs(bufnr)
 end
 
 --- Get documentation data for a specific tree-sitter node
---- @param node table: Tree-sitter node
+--- @param node TSNode: Tree-sitter node
 --- @param bufnr number?: Buffer number (defaults to current buffer)
 --- @return table?: Documentation data if found
 local function get_doc_data_for_node(node, bufnr)
@@ -167,7 +167,7 @@ local function get_doc_data_for_node(node, bufnr)
 end
 
 --- Generate documentation for a specific node
---- @param node table: Tree-sitter node
+--- @param node TSNode: Tree-sitter node
 --- @param bufnr number?: Buffer number
 --- @param lang string?: Language override
 --- @return boolean?: Success status if node exists
@@ -182,7 +182,11 @@ end
 --- Generate documentation for the node at cursor position
 --- @return boolean?: Success status
 function M.doc_node_at_cursor()
-  return doc_node(vim.treesitter.get_node())
+  local node = vim.treesitter.get_node()
+  if node == nil then
+    return false
+  end
+  return doc_node(node)
 end
 
 --- Get documentation entries based on position criteria
