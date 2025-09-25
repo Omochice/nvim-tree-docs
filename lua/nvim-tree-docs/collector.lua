@@ -1,5 +1,10 @@
 -- Collector module for nvim-tree-docs
 -- Manages collections of tree-sitter match data with ordered iteration
+local entry = require("nvim-tree-docs.entry")
+
+--- @class Collector
+--- @field __entries table<string, Entry> Maps node IDs to entry data
+--- @field __order string[] Array of node IDs in insertion order
 
 local M = {}
 
@@ -29,7 +34,7 @@ local collector_metatable = {
 }
 
 --- Create a new collector instance
---- @return table: New collector with entries and order tracking
+--- @return Collector: New collector with entries and order tracking
 function M.new_collector()
   return setmetatable({
     __entries = {}, -- Maps node IDs to entry data
@@ -45,8 +50,7 @@ function M.is_collector_empty(collector)
 end
 
 --- Create an iterator for a collector
---- @param collector table: Collector to iterate over
---- @return function: Iterator function
+--- @param collector Collector: Collector to iterate over
 function M.iterate_collector(collector)
   local i = 1
   return function()
@@ -64,7 +68,7 @@ function M.iterate_collector(collector)
 end
 
 --- Generate a unique ID for a tree-sitter node based on its range
---- @param node table: Tree-sitter node
+--- @param node TSNode: Tree-sitter node
 --- @return string: Unique identifier
 local function get_node_id(node)
   local srow, scol, erow, ecol = node:range()
@@ -72,40 +76,40 @@ local function get_node_id(node)
 end
 
 --- Internal collection helper that recursively processes matches
---- @param collector table: Target collector
---- @param entry table: Entry to modify
+--- @param collector Collector: Target collector
+--- @param mod_entry table: Entry to modify
 --- @param match table: Match data to process
 --- @param key string: Key being processed
 --- @param add_fn function: Function to call for recursive processing
-local function collect_(collector, entry, match, key, add_fn)
+local function collect_(collector, mod_entry, match, key, add_fn)
   if match.definition then
     -- If this match has a definition, create a sub-collector if needed
-    if not entry[key] then
-      entry[key] = M.new_collector()
+    if not mod_entry[key] then
+      mod_entry[key] = M.new_collector()
     end
-    return add_fn(entry[key], key, match, collect_)
-  elseif not entry[key] then
+    return add_fn(mod_entry[key], key, match, collect_)
+  elseif not mod_entry[key] then
     -- Simple assignment if key doesn't exist
-    entry[key] = match
+    mod_entry[key] = match
   elseif key == "start_point" and match.node then
     -- For start points, keep the earliest one
-    local _, _, current_start = entry[key].node:start()
+    local _, _, current_start = mod_entry[key].node:start()
     local _, _, new_start = match.node:start()
     if new_start < current_start then
-      entry[key] = match
+      mod_entry[key] = match
     end
   elseif key == "end_point" and match.node then
     -- For end points, keep the latest one
-    local _, _, current_end = entry[key].node:end_()
+    local _, _, current_end = mod_entry[key].node:end_()
     local _, _, new_end = match.node:end_()
     if new_end > current_end then
-      entry[key] = match
+      mod_entry[key] = match
     end
   end
 end
 
 --- Add a match to the collector
---- @param collector table: Target collector
+--- @param collector Collector: Target collector
 --- @param kind string: Kind of match (e.g., "function", "variable")
 --- @param match table: Match data from tree-sitter query
 function M.add_match(collector, kind, match)
@@ -128,12 +132,12 @@ function M.add_match(collector, kind, match)
     -- Find the correct insertion position to maintain order
     while not done do
       local entry_key = entry_keys[i]
-      local entry = entry_key and collector.__entries[entry_key]
+      local e = entry_key and collector.__entries[entry_key]
 
-      if not entry then
+      if not e then
         done = true
       else
-        local _, _, start_byte = entry.definition.node:start()
+        local _, _, start_byte = e.definition.node:start()
         if def_start_byte < start_byte then
           done = true
         else
@@ -144,10 +148,7 @@ function M.add_match(collector, kind, match)
     end
 
     table.insert(collector.__order, order_index, node_id)
-    collector.__entries[node_id] = {
-      kind = kind,
-      definition = def,
-    }
+    collector.__entries[node_id] = entry.new(kind, def)
   end
 
   -- Process all sub-matches recursively

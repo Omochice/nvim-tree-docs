@@ -19,6 +19,7 @@ local language_specs = {
 }
 
 --- Cache for documentation data to avoid recomputation
+--- @type table<number, { tick: number, docs: Collector }>
 local doc_cache = {}
 
 --- Get the documentation spec name for a given language
@@ -69,15 +70,15 @@ local function generate_docs(data_list, bufnr, lang)
 
   -- Sort data from top to bottom to ensure proper line offset calculation
   table.sort(data_list, function(a, b)
-    local _, _, start_byte_a = utils.get_start_position(a)
-    local _, _, start_byte_b = utils.get_start_position(b)
+    local _, _, start_byte_a = a:start_position()
+    local _, _, start_byte_b = b:start_position()
     return start_byte_a < start_byte_b
   end)
 
   local line_offset = 0
   for _, doc_data in ipairs(data_list) do
-    local node_sr, node_sc = utils.get_start_position(doc_data)
-    local node_er, node_ec = utils.get_end_position(doc_data)
+    local node_sr, node_sc = doc_data:start_position()
+    local node_er, node_ec = doc_data:end_position()
     local content_lines = utils.get_buf_content(node_sr, node_sc, node_er, node_ec, bufnr)
     local replaced_count = (node_er + 1) - node_sr
 
@@ -108,7 +109,7 @@ end
 
 --- Collect all documentation data from a buffer
 --- @param bufnr number?: Buffer number (defaults to current buffer)
---- @return table: Collector containing documentation data
+--- @return Collector: Collector containing documentation data
 local function collect_docs(bufnr)
   bufnr = utils.get_bufnr(bufnr)
 
@@ -148,8 +149,8 @@ local function get_doc_data_for_node(node, bufnr)
   for iter_item in collectors.iterate_collector(doc_data) do
     local is_more_specific = true
     local doc_def = iter_item.entry
-    local _, _, start = utils.get_start_position(doc_def)
-    local _, _, end_pos = utils.get_end_position(doc_def)
+    local _, _, start = doc_def:start_position()
+    local _, _, end_pos = doc_def:end_position()
     local is_in_range = (node_start >= start) and (node_start < end_pos)
 
     if last_start and last_end then
@@ -207,11 +208,11 @@ local function get_docs_from_position(args)
     local start_r, end_r
 
     if is_edit_type then
-      start_r = utils.get_edit_start_position(def)
-      end_r = utils.get_edit_end_position(def)
+      start_r = def:edit_start_position()
+      end_r = def:edit_end_position()
     else
-      start_r = utils.get_start_position(def)
-      end_r = utils.get_end_position(def)
+      start_r = def:start_position()
+      end_r = def:end_position()
     end
 
     local matches
