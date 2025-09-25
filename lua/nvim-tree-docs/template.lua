@@ -334,7 +334,7 @@ end
 --- @param output table: Build output
 --- @param context table: Template context
 --- @return table: Packaged output with content and marks
-function package_build_output(output, context)
+local function package_build_output(output, context)
   local result = { content = {}, marks = {} }
   for i, entry in ipairs(output) do
     for j, line in ipairs(entry) do
