@@ -324,13 +324,13 @@ function M.detach(bufnr)
   for _, map in ipairs(mappings) do
     local lhs = string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-"))
     if k:any(function(m)
-          return m.mode == map.mode and m.lhs == lhs
-        end) then
+      return m.mode == map.mode and m.lhs == lhs
+    end) then
       vim.api.nvim_buf_del_keymap(bufnr, map.mode, lhs)
     end
     if k:any(function(m)
-          return m.mode == map.mode and m.lhs == map.keymap
-        end) then
+      return m.mode == map.mode and m.lhs == map.keymap
+    end) then
       vim.api.nvim_buf_del_keymap(bufnr, map.mode, map.keymap)
     end
   end
