@@ -4,7 +4,7 @@
 local M = {}
 
 -- Namespace for highlighting
-local ns = vim.api.nvim_create_namespace("blorg")
+local ns = vim.api.nvim_create_namespace("nvim-tree-docs")
 
 --- Get the start node from an entry
 --- @param entry table: Entry containing start_point or definition

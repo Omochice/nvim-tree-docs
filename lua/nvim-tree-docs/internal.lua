@@ -336,10 +336,4 @@ function M.detach(bufnr)
   end
 end
 
--- Export snake_case versions for configuration purposes
-M.doc_node_at_cursor = M.doc_node_at_cursor
-M.doc_node = M.doc_node
-M.doc_all_in_range = M.doc_all_in_range
-M.edit_doc_at_cursor = M.edit_doc_at_cursor
-
 return M
