@@ -108,7 +108,7 @@ end
 --- @param collector table?: Collector with data
 --- @param options table?: Context options
 --- @return table: Template context
-function M.new_template_context(collector, options)
+local function new_template_context(collector, options)
   options = options or {}
   local context = vim.tbl_extend("keep", {
     iter = M.iter,
@@ -334,7 +334,7 @@ end
 --- @param output table: Build output
 --- @param context table: Template context
 --- @return table: Packaged output with content and marks
-function M.package_build_output(output, context)
+function package_build_output(output, context)
   local result = { content = {}, marks = {} }
   for i, entry in ipairs(output) do
     for j, line in ipairs(entry) do
@@ -368,9 +368,9 @@ function M.process_template(collector, config)
   local ps_list = (spec_conf.templates and spec_conf.templates[kind]) or spec.templates[kind]
   local processors = vim.tbl_extend("force", spec.processors, spec_conf.processors or {})
   local slot_config = (spec_conf.slots and spec_conf.slots[kind]) or {}
-  local context = M.new_template_context(collector, config)
+  local context = new_template_context(collector, config)
 
-  return M.package_build_output(
+  return package_build_output(
     M.build_slots(
       M.get_filtered_slots(M.get_expanded_slots(ps_list, slot_config, processors), processors, slot_config, context),
       processors,

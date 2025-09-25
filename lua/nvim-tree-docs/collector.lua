@@ -37,13 +37,6 @@ function M.new_collector()
   }, collector_metatable)
 end
 
---- Check if a value is a collector
---- @param value any: Value to check
---- @return boolean: True if value is a collector
-function M.is_collector(value)
-  return type(value) == "table" and type(value.__entries) == "table"
-end
-
 --- Check if a collector is empty
 --- @param collector table: Collector to check
 --- @return boolean: True if collector has no entries
@@ -73,7 +66,7 @@ end
 --- Generate a unique ID for a tree-sitter node based on its range
 --- @param node table: Tree-sitter node
 --- @return string: Unique identifier
-function M.get_node_id(node)
+local function get_node_id(node)
   local srow, scol, erow, ecol = node:range()
   return string.format("%d_%d_%d_%d", srow, scol, erow, ecol)
 end
@@ -122,7 +115,7 @@ function M.add_match(collector, kind, match)
 
   local def = match.definition
   local def_node = def.node
-  local node_id = M.get_node_id(def_node)
+  local node_id = get_node_id(def_node)
 
   -- Add entry if it doesn't exist, maintaining order by start position
   if not collector.__entries[node_id] then
