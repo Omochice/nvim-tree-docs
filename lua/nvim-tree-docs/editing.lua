@@ -12,7 +12,7 @@ local ns = vim.api.nvim_create_namespace("doc-edit")
 --- Extract editable regions from documentation comment
 --- @param args table: Arguments containing lang, doc-lang, node, bufnr
 --- @return table: Parsed data with editable regions
-function M.get_doc_comment_data(args)
+local function get_doc_comment_data(args)
   local lang = args.lang
   local doc_lang = args["doc-lang"]
   local node = args.node
@@ -53,7 +53,7 @@ end
 function M.edit_doc(args)
   local bufnr = args.bufnr
   local doc_node = args.node
-  local comment_data = M.get_doc_comment_data(args)
+  local comment_data = get_doc_comment_data(args)
   local edit_nodes = comment_data.edit or {}
   local sr = doc_node:range()
 

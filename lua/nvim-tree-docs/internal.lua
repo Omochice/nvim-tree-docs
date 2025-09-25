@@ -24,7 +24,7 @@ local doc_cache = {}
 --- Get the documentation spec name for a given language
 --- @param lang string: The language name (e.g., 'javascript', 'lua')
 --- @return string: The spec name (e.g., 'jsdoc', 'luadoc')
-function M.get_spec_for_lang(lang)
+local function get_spec_for_lang(lang)
   local spec = language_specs[lang]
   if not spec then
     error(string.format("No language spec configured for %s", lang))
@@ -36,7 +36,7 @@ end
 --- @param lang string: The language name
 --- @param spec string: The spec name
 --- @return table: The merged configuration
-function M.get_spec_config(lang, spec)
+local function get_spec_config(lang, spec)
   local spec_def = templates.get_spec(lang, spec)
   local module_config = configure.get()
   local spec_default_config = spec_def.config
@@ -45,25 +45,25 @@ function M.get_spec_config(lang, spec)
   return vim.tbl_deep_extend("force", spec_default_config, spec_config, lang_config)
 end
 
---- Get the documentation spec for a buffer
---- @param bufnr number?: The buffer number (defaults to current buffer)
---- @return string: The spec name
-function M.get_spec_for_buf(bufnr)
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-  return M.get_spec_for_lang(vim.api.nvim_buf_get_option(bufnr, "ft"))
-end
+----- Get the documentation spec for a buffer
+----- @param bufnr number?: The buffer number (defaults to current buffer)
+----- @return string: The spec name
+-- local function get_spec_for_buf(bufnr)
+--   bufnr = bufnr or vim.api.nvim_get_current_buf()
+--   return get_spec_for_lang(vim.api.nvim_get_option_value("ft", { buf = bufnr }))
+-- end
 
 --- Generate documentation for a list of documentation data
 --- @param data_list table: List of documentation data entries
 --- @param bufnr number?: Buffer number (defaults to current buffer)
 --- @param lang string?: Language override (defaults to buffer filetype)
 --- @return boolean: Success status
-function M.generate_docs(data_list, bufnr, lang)
+local function generate_docs(data_list, bufnr, lang)
   bufnr = utils.get_bufnr(bufnr)
-  lang = lang or vim.api.nvim_buf_get_option(bufnr, "ft")
-  local spec_name = M.get_spec_for_lang(lang)
+  lang = lang or vim.api.nvim_get_option_value("ft", { buf = bufnr })
+  local spec_name = get_spec_for_lang(lang)
   local spec = templates.get_spec(lang, spec_name)
-  local spec_config = M.get_spec_config(lang, spec_name)
+  local spec_config = get_spec_config(lang, spec_name)
   local edits = {}
   local marks = {}
 
@@ -109,7 +109,7 @@ end
 --- Collect all documentation data from a buffer
 --- @param bufnr number?: Buffer number (defaults to current buffer)
 --- @return table: Collector containing documentation data
-function M.collect_docs(bufnr)
+local function collect_docs(bufnr)
   bufnr = utils.get_bufnr(bufnr)
 
   -- Return cached data if buffer hasn't changed
@@ -138,11 +138,11 @@ end
 --- @param node table: Tree-sitter node
 --- @param bufnr number?: Buffer number (defaults to current buffer)
 --- @return table?: Documentation data if found
-function M.get_doc_data_for_node(node, bufnr)
+local function get_doc_data_for_node(node, bufnr)
   local current = nil
   local last_start = nil
   local last_end = nil
-  local doc_data = M.collect_docs(bufnr)
+  local doc_data = collect_docs(bufnr)
   local _, _, node_start = node:start()
 
   for iter_item in collectors.iterate_collector(doc_data) do
@@ -171,10 +171,10 @@ end
 --- @param bufnr number?: Buffer number
 --- @param lang string?: Language override
 --- @return boolean?: Success status if node exists
-function M.doc_node(node, bufnr, lang)
+local function doc_node(node, bufnr, lang)
   if node then
-    local doc_data = M.get_doc_data_for_node(node, bufnr)
-    return M.generate_docs({ doc_data }, bufnr, lang)
+    local doc_data = get_doc_data_for_node(node, bufnr)
+    return generate_docs({ doc_data }, bufnr, lang)
   end
   return nil
 end
@@ -182,20 +182,20 @@ end
 --- Generate documentation for the node at cursor position
 --- @return boolean?: Success status
 function M.doc_node_at_cursor()
-  return M.doc_node(vim.treesitter.get_node())
+  return doc_node(vim.treesitter.get_node())
 end
 
 --- Get documentation entries based on position criteria
 --- @param args table: Arguments containing start-line, end-line, position, inclusion, bufnr
 --- @return table: List of matching documentation entries
-function M.get_docs_from_position(args)
+local function get_docs_from_position(args)
   local start_line = args["start-line"]
   local end_line = args["end-line"]
   local position = args.position
   local inclusion = args.inclusion
   local bufnr = args.bufnr
   local is_edit_type = (position == "edit")
-  local doc_data = M.collect_docs(bufnr)
+  local doc_data = collect_docs(bufnr)
   local result = {}
 
   for item in collectors.iterate_collector(doc_data) do
@@ -228,8 +228,8 @@ end
 --- Get documentation entries within a range
 --- @param args table: Arguments with start-line, end-line, bufnr
 --- @return table: List of documentation entries
-function M.get_docs_in_range(args)
-  return M.get_docs_from_position(vim.tbl_extend("force", args, {
+local function get_docs_in_range(args)
+  return get_docs_from_position(vim.tbl_extend("force", args, {
     position = nil,
     inclusion = false,
   }))
@@ -238,8 +238,8 @@ end
 --- Get documentation entries at a specific range for editing
 --- @param args table: Arguments with start-line, end-line, bufnr
 --- @return table: List of documentation entries
-function M.get_docs_at_range(args)
-  return M.get_docs_from_position(vim.tbl_extend("force", args, {
+local function get_docs_at_range(args)
+  return get_docs_from_position(vim.tbl_extend("force", args, {
     inclusion = true,
     position = "edit",
   }))
@@ -247,10 +247,10 @@ end
 
 --- Get documentation entries from current visual selection
 --- @return table: List of documentation entries
-function M.get_docs_from_selection()
+local function get_docs_from_selection()
   local _, start, _, _ = unpack(vim.fn.getpos("'<"))
   local _, end_pos, _, _ = unpack(vim.fn.getpos("'>"))
-  return M.get_docs_in_range({
+  return get_docs_in_range({
     ["start-line"] = start - 1,
     ["end-line"] = end_pos - 1,
   })
@@ -259,20 +259,20 @@ end
 -- Generate documentation for all entries in current selection
 -- @return boolean: Success status
 function M.doc_all_in_range()
-  return M.generate_docs(M.get_docs_from_selection())
+  return generate_docs(get_docs_from_selection())
 end
 
 --- Edit documentation at cursor position
 --- @return boolean?: Success status if documentation exists
 function M.edit_doc_at_cursor()
   local row = vim.api.nvim_win_get_cursor(0)[1]
-  local doc_data = M.get_docs_at_range({
+  local doc_data = get_docs_at_range({
     ["start-line"] = row - 1,
     ["end-line"] = row - 1,
   })
   local bufnr = vim.api.nvim_get_current_buf()
-  local lang = vim.api.nvim_buf_get_option(bufnr, "ft")
-  local spec_name = M.get_spec_for_lang(lang)
+  local lang = vim.api.nvim_get_option_value("ft", { buf = bufnr })
+  local spec_name = get_spec_for_lang(lang)
   local spec = templates.get_spec(lang, spec_name)
   local doc_lang = spec["doc-lang"]
   local doc_entry = doc_data[1] and doc_data[1].doc
