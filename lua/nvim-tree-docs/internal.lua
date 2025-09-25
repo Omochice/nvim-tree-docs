@@ -50,7 +50,7 @@ end
 --- @return string: The spec name
 function M.get_spec_for_buf(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  return M.get_spec_for_lang(vim.api.nvim_buf_get_option(bufnr, "ft"))
+  return M.get_spec_for_lang(vim.api.nvim_get_option_value("ft", { buf = bufnr }))
 end
 
 --- Generate documentation for a list of documentation data
@@ -60,7 +60,7 @@ end
 --- @return boolean: Success status
 function M.generate_docs(data_list, bufnr, lang)
   bufnr = utils.get_bufnr(bufnr)
-  lang = lang or vim.api.nvim_buf_get_option(bufnr, "ft")
+  lang = lang or vim.api.nvim_get_option_value("ft", { buf = bufnr })
   local spec_name = M.get_spec_for_lang(lang)
   local spec = templates.get_spec(lang, spec_name)
   local spec_config = M.get_spec_config(lang, spec_name)
@@ -271,7 +271,7 @@ function M.edit_doc_at_cursor()
     ["end-line"] = row - 1,
   })
   local bufnr = vim.api.nvim_get_current_buf()
-  local lang = vim.api.nvim_buf_get_option(bufnr, "ft")
+  local lang = vim.api.nvim_get_option_value("ft", { buf = bufnr })
   local spec_name = M.get_spec_for_lang(lang)
   local spec = templates.get_spec(lang, spec_name)
   local doc_lang = spec["doc-lang"]
@@ -324,13 +324,13 @@ function M.detach(bufnr)
   for _, map in ipairs(mappings) do
     local lhs = string.format("<Plug>(nvim-tree-docs-%s)", map.name:gsub("_", "-"))
     if k:any(function(m)
-      return m.mode == map.mode and m.lhs == lhs
-    end) then
+          return m.mode == map.mode and m.lhs == lhs
+        end) then
       vim.api.nvim_buf_del_keymap(bufnr, map.mode, lhs)
     end
     if k:any(function(m)
-      return m.mode == map.mode and m.lhs == map.keymap
-    end) then
+          return m.mode == map.mode and m.lhs == map.keymap
+        end) then
       vim.api.nvim_buf_del_keymap(bufnr, map.mode, map.keymap)
     end
   end
