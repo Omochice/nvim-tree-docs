@@ -6,6 +6,8 @@
 
 [![asciicast](https://asciinema.org/a/ISWevTxkJCbYDAfEoHuleBEGd.svg)](https://asciinema.org/a/ISWevTxkJCbYDAfEoHuleBEGd)
 
+(This screencast is using [kawarimidoll/autoplay.vim](https://github.com/kawarimidoll/autoplay.vim))
+
 > [!NOTE]
 > This plugin requires nvim-treesitter's `main` branch.
 
