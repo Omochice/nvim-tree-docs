@@ -37,7 +37,9 @@
         treefmt = treefmt-nix.lib.evalModule pkgs (
           { ... }:
           {
-            settings.global.excludes = [ ];
+            settings.global.excludes = [
+              "_sources/**"
+            ];
             programs = {
               # keep-sorted start block=yes
               fish_indent.enable = true;
@@ -77,11 +79,27 @@
             type = "app";
             program = "${program}/bin/${name}";
           };
+
+        sources = pkgs.callPackage ./_sources/generated.nix { };
+        nvim-treesitter-raw = pkgs.stdenvNoCC.mkDerivation {
+          inherit (sources.nvim-treesitter) pname version src;
+          doBuild = false;
+          buildPhase = ":";
+          installPhase = ''
+            runHook preInstall
+            mkdir -p $out
+            cp -r . $out/
+            runHook postInstall
+          '';
+          meta = {
+            platforms = pkgs.lib.platforms.all;
+          };
+        };
         nvim-treesitter = (
           pkgs.symlinkJoin {
             name = "nvim-treesitter";
             paths = [
-              pkgs.vimPlugins.nvim-treesitter
+              nvim-treesitter-raw
             ]
             ++ pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
           }
@@ -121,11 +139,14 @@
             # pkgs.lua51Packages.luarocks-nix
             wrappedVusted
           ];
+          nvfetcher = [
+            pkgs.nvfetcher
+          ];
           renovate = [
             pkgs.renovate
           ];
           # keep-sorted end
-          default = actions ++ renovate ++ neovim ++ [ treefmt.config.build.wrapper ];
+          default = actions ++ renovate ++ neovim ++ nvfetcher ++ [ treefmt.config.build.wrapper ];
         };
       in
       {
@@ -151,6 +172,12 @@
               vusted test
             ''
             |> runAs "vusted-test" devPackages.neovim;
+          update-nvim-treesitter =
+            ''
+              nvfetcher
+            ''
+            |> runAs "update-nvim-treesitter" devPackages.nvfetcher;
+
         };
         devShells =
           devPackages

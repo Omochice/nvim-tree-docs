@@ -1,0 +1,23 @@
+{
+    "nvim-treesitter": {
+        "cargoLocks": null,
+        "date": "2025-05-24",
+        "extract": null,
+        "name": "nvim-treesitter",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "nvim-treesitter",
+            "repo": "nvim-treesitter",
+            "rev": "42fc28ba918343ebfd5565147a42a26580579482",
+            "sha256": "sha256-CVs9FTdg3oKtRjz2YqwkMr0W5qYLGfVyxyhE3qnGYbI=",
+            "sparseCheckout": [],
+            "type": "github"
+        },
+        "version": "42fc28ba918343ebfd5565147a42a26580579482"
+    }
+}
