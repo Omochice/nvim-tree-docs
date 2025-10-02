@@ -1,6 +1,6 @@
 describe("typescript jsdoc", function()
   it("should generate typescript jsdoc", function()
-    local bufnr = vim.api.nvim_create_buf(false, false)
+    local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(bufnr)
     vim.bo.filetype = "typescript"
     local contents = {
@@ -29,7 +29,7 @@ describe("typescript jsdoc", function()
   end)
 
   it("should generate jsdoc for variable", function()
-    local bufnr = vim.api.nvim_create_buf(false, false)
+    local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(bufnr)
     vim.bo.filetype = "typescript"
     local contents = {
@@ -50,7 +50,7 @@ describe("typescript jsdoc", function()
   end)
 
   it("should generate jsdoc for class", function()
-    local bufnr = vim.api.nvim_create_buf(false, false)
+    local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(bufnr)
     vim.bo.filetype = "typescript"
     local contents = {
@@ -75,7 +75,7 @@ describe("typescript jsdoc", function()
   end)
 
   it("should generate jsdoc for method", function()
-    local bufnr = vim.api.nvim_create_buf(false, false)
+    local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(bufnr)
     vim.bo.filetype = "typescript"
     local contents = {
