@@ -1,8 +1,12 @@
 describe("lua luadoc", function()
-  it("should generate lua docstring", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
+  ---@type integer
+  local bufnr
+  before_each(function()
+    bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "lua"
+    vim.bo[bufnr].filetype = "lua"
+  end)
+  it("should generate lua docstring", function()
     local contents = {
       "local function sample(a, b)",
       "  return a + b",
@@ -25,9 +29,6 @@ describe("lua luadoc", function()
   end)
 
   it("should generate luadoc for variable", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "lua"
     local contents = {
       "local sample = 42",
     }

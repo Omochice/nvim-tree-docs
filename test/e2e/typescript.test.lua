@@ -1,8 +1,12 @@
 describe("typescript jsdoc", function()
-  it("should generate typescript jsdoc", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
+  ---@type integer
+  local bufnr
+  before_each(function()
+    bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "typescript"
+    vim.bo[bufnr].filetype = "typescript"
+  end)
+  it("should generate typescript jsdoc", function()
     local contents = {
       "function sample(a: string, b: number): string {",
       "  return a + b;",
@@ -29,9 +33,6 @@ describe("typescript jsdoc", function()
   end)
 
   it("should generate jsdoc for variable", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "typescript"
     local contents = {
       "const sample = 42;",
     }
@@ -50,9 +51,6 @@ describe("typescript jsdoc", function()
   end)
 
   it("should generate jsdoc for class", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "typescript"
     local contents = {
       "class A {",
       "  foo = 42;",
@@ -75,9 +73,6 @@ describe("typescript jsdoc", function()
   end)
 
   it("should generate jsdoc for method", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "typescript"
     local contents = {
       "class A {",
       "  foo = 42;",

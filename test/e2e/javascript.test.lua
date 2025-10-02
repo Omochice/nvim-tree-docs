@@ -1,8 +1,12 @@
 describe("javascript jsdoc", function()
-  it("should generate jsdoc for function", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
+  ---@type integer
+  local bufnr
+  before_each(function()
+    bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "javascript"
+    vim.bo[bufnr].filetype = "javascript"
+  end)
+  it("should generate jsdoc for function", function()
     local contents = {
       "function sample(a, b) {",
       "  return a + b;",
@@ -29,9 +33,6 @@ describe("javascript jsdoc", function()
   end)
 
   it("should generate jsdoc for variable", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "javascript"
     local contents = {
       "const sample = 42;",
     }
@@ -50,9 +51,6 @@ describe("javascript jsdoc", function()
   end)
 
   it("should generate jsdoc for class", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "javascript"
     local contents = {
       "class A {",
       "  foo = 42;",
@@ -76,9 +74,6 @@ describe("javascript jsdoc", function()
   end)
 
   it("should generate jsdoc for method", function()
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_set_current_buf(bufnr)
-    vim.bo.filetype = "javascript"
     local contents = {
       "class A {",
       "  foo = 42;",
