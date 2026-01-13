@@ -11,6 +11,52 @@ local editing = require("nvim-tree-docs.editing")
 local configure = require("nvim-tree-docs.configure")
 local queries = require("nvim-treesitter.query")
 
+--- Collect docs query results grouped by capture hierarchy
+--- @param bufnr number: Buffer number
+--- @return table: List of grouped matches
+local function collect_docs_matches(bufnr)
+  local lang = vim.api.nvim_get_option_value("ft", { buf = bufnr })
+  local query = vim.treesitter.query.get(lang, "docs")
+  if not query then
+    return {}
+  end
+
+  local parser = vim.treesitter.get_parser(bufnr, lang)
+  local tree = parser:parse()[1]
+  local root = tree:root()
+
+  local results = {}
+  local current_match = {}
+  local last_pattern = nil
+
+  for id, node, metadata, match in query:iter_captures(root, bufnr) do
+    local capture_name = query.captures[id]
+    local pattern = match.pattern
+
+    if pattern ~= last_pattern then
+      if next(current_match) then
+        table.insert(results, current_match)
+      end
+      current_match = {}
+      last_pattern = pattern
+    end
+
+    local parts = vim.split(capture_name, ".", { plain = true })
+    local target = current_match
+    for i = 1, #parts - 1 do
+      target[parts[i]] = target[parts[i]] or {}
+      target = target[parts[i]]
+    end
+    target[parts[#parts]] = { node = node, metadata = metadata }
+  end
+
+  if next(current_match) then
+    table.insert(results, current_match)
+  end
+
+  return results
+end
+
 -- Language specifications mapping
 local language_specs = {
   javascript = "jsdoc",
