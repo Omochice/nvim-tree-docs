@@ -9,7 +9,6 @@ local templates = require("nvim-tree-docs.template")
 local collectors = require("nvim-tree-docs.collector")
 local editing = require("nvim-tree-docs.editing")
 local configure = require("nvim-tree-docs.configure")
-local queries = require("nvim-treesitter.query")
 
 --- Collect docs query results grouped by capture hierarchy
 --- @param bufnr number: Buffer number
