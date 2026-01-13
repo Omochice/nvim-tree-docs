@@ -164,7 +164,7 @@ local function collect_docs(bufnr)
   end
 
   local collector = collectors.new_collector()
-  local doc_matches = queries.collect_group_results(bufnr, "docs")
+  local doc_matches = collect_docs_matches(bufnr)
 
   for _, item in ipairs(doc_matches) do
     for kind, match in pairs(item) do
