@@ -25,32 +25,40 @@ local function collect_docs_matches(bufnr)
   local root = tree:root()
 
   local results = {}
-  local current_match = {}
-  local last_pattern = nil
 
-  for id, node, metadata, match in query:iter_captures(root, bufnr) do
-    local capture_name = query.captures[id]
-    local pattern = match.pattern
+  for _, match, metadata in query:iter_matches(root, bufnr, 0, -1, { all = true }) do
+    local current_match = {}
 
-    if pattern ~= last_pattern then
-      if next(current_match) then
-        table.insert(results, current_match)
+    for id, nodes in pairs(match) do
+      local capture_name = query.captures[id]
+      local capture_metadata = metadata[id] or {}
+
+      for _, node in ipairs(nodes) do
+        local parts = vim.split(capture_name, ".", { plain = true })
+        local target = current_match
+        for i = 1, #parts - 1 do
+          target[parts[i]] = target[parts[i]] or {}
+          target = target[parts[i]]
+        end
+
+        local leaf_key = parts[#parts]
+        local entry = { node = node, metadata = capture_metadata }
+
+        if target[leaf_key] then
+          if target[leaf_key].node then
+            target[leaf_key] = { target[leaf_key], entry }
+          else
+            table.insert(target[leaf_key], entry)
+          end
+        else
+          target[leaf_key] = entry
+        end
       end
-      current_match = {}
-      last_pattern = pattern
     end
 
-    local parts = vim.split(capture_name, ".", { plain = true })
-    local target = current_match
-    for i = 1, #parts - 1 do
-      target[parts[i]] = target[parts[i]] or {}
-      target = target[parts[i]]
+    if next(current_match) then
+      table.insert(results, current_match)
     end
-    target[parts[#parts]] = { node = node, metadata = metadata }
-  end
-
-  if next(current_match) then
-    table.insert(results, current_match)
   end
 
   return results
