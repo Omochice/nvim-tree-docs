@@ -53,7 +53,10 @@
               shfmt.enable = true;
               stylua = {
                 enable = true;
-                settings = ./stylua.toml |> builtins.readFile |> builtins.fromTOML;
+                settings = pkgs.lib.pipe ./stylua.toml [
+                  builtins.readFile
+                  builtins.fromTOML
+                ];
               };
               yamlfmt = {
                 enable = true;
@@ -155,33 +158,23 @@
           formatting = treefmt.config.build.check self;
         };
         apps = {
-          check-actions =
-            ''
-              actionlint
-              ghalint run
-              zizmor .github/workflows .github/actions
-            ''
-            |> runAs "check-actions" devPackages.actions;
-          check-renovate-config =
-            ''
-              renovate-config-validator --strict renovate.json
-            ''
-            |> runAs "check-renovate-config" devPackages.renovate;
-          test =
-            ''
-              vusted test
-            ''
-            |> runAs "vusted-test" devPackages.neovim;
-          update-nvim-treesitter =
-            ''
-              nvfetcher
-            ''
-            |> runAs "update-nvim-treesitter" devPackages.nvfetcher;
+          check-actions = runAs "check-actions" devPackages.actions ''
+            actionlint
+            ghalint run
+            zizmor .github/workflows .github/actions
+          '';
+          check-renovate-config = runAs "check-renovate-config" devPackages.renovate ''
+            renovate-config-validator --strict renovate.json
+          '';
+          test = runAs "vusted-test" devPackages.neovim ''
+            vusted test
+          '';
+          update-nvim-treesitter = runAs "update-nvim-treesitter" devPackages.nvfetcher ''
+            nvfetcher
+          '';
 
         };
-        devShells =
-          devPackages
-          |> pkgs.lib.attrsets.mapAttrs (name: buildInputs: pkgs.mkShell { inherit buildInputs; });
+        devShells = pkgs.lib.attrsets.mapAttrs (name: buildInputs: pkgs.mkShell { inherit buildInputs; }) devPackages;
       }
     );
 }
