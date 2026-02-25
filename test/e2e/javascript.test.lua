@@ -95,4 +95,26 @@ describe("javascript jsdoc", function()
       "}",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+
+  it("should edit jsdoc at cursor without error", function()
+    local contents = {
+      "function sample(a, b) {",
+      "  return a + b;",
+      "}",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "javascript"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 9 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    -- re-parse after doc generation changed the buffer
+    vim.treesitter.get_parser(bufnr, "javascript"):parse()
+    -- cursor is now on the generated doc comment
+    vim.api.nvim_win_set_cursor(0, { 2, 0 })
+
+    assert.has_no.errors(function()
+      require("nvim-tree-docs").edit_doc_at_cursor()
+    end)
+  end)
 end)
