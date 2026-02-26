@@ -67,6 +67,7 @@ end
 -- Language specifications mapping
 local language_specs = {
   javascript = "jsdoc",
+  kotlin = "kdoc",
   lua = "luadoc",
   typescript = "tsdoc",
 }
