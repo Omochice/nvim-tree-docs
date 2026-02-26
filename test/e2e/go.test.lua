@@ -42,4 +42,23 @@ describe("go godoc", function()
       "}",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate godoc for method", function()
+    local contents = {
+      "func (s *Server) Start() error {",
+      "\treturn nil",
+      "}",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "go"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 18 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "// Start description",
+      "func (s *Server) Start() error {",
+      "\treturn nil",
+      "}",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
 end)

@@ -9,6 +9,7 @@ local module = {
   }, {
     slots = {
       ["function"] = {},
+      method = {},
     },
   }),
   ["doc-lang"] = nil,
@@ -25,6 +26,11 @@ template_mod.extend_spec(module, "base.base")
 template_mod.loaded_specs[mod_name] = module
 
 module.templates["function"] = {
+  "description",
+  "%content%",
+}
+
+module.templates.method = {
   "description",
   "%content%",
 }
