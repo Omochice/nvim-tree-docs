@@ -174,7 +174,9 @@
           '';
 
         };
-        devShells = pkgs.lib.attrsets.mapAttrs (name: buildInputs: pkgs.mkShell { inherit buildInputs; }) devPackages;
+        devShells = pkgs.lib.attrsets.mapAttrs (
+          name: buildInputs: pkgs.mkShell { inherit buildInputs; }
+        ) devPackages;
       }
     );
 }
