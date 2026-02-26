@@ -9,7 +9,9 @@ local module = {
   }, {
     empty_line_after_description = true,
     slots = {
-      ["function"] = {},
+      ["function"] = {
+        param = true,
+      },
     },
   }),
   ["doc-lang"] = nil,
@@ -28,6 +30,7 @@ template_mod.loaded_specs[mod_name] = module
 module.templates["function"] = {
   "doc-start",
   "description",
+  "param",
   "doc-end",
   "%content%",
 }
@@ -58,5 +61,22 @@ module.processors.description = {
     else
       return { description, " *" }
     end
+  end,
+}
+
+module.processors.param = {
+  when = function(context)
+    return context.parameters and not context["empty?"](context.parameters)
+  end,
+  build = function(context)
+    local result = {}
+    for param in context.iter(context.parameters) do
+      local name = context["get-text"](param.entry.name)
+      table.insert(
+        result,
+        module.__build(" * @param ", name, " ", { content = "The " .. name .. " param", mark = "tabstop" })
+      )
+    end
+    return result
   end,
 }
