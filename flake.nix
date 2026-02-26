@@ -62,14 +62,12 @@
             };
             programs = {
               # keep-sorted start block=yes
-              fish_indent.enable = true;
               keep-sorted.enable = true;
               nixfmt.enable = true;
               oxfmt = {
                 enable = true;
                 includes = [ "*.json" ];
               };
-              shfmt.enable = true;
               stylua = {
                 enable = true;
                 settings = pkgs.lib.pipe ./stylua.toml [
