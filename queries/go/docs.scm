@@ -4,6 +4,11 @@
   body: ((block) @function.end_point
          (#set! function.end_point.position "start"))) @function.definition
 
+; Type declarations (struct, interface, etc.)
+(type_declaration
+  (type_spec
+    name: (type_identifier) @type.name)) @type.definition
+
 ; Method declarations
 (method_declaration
   name: (field_identifier) @method.name

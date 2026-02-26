@@ -61,4 +61,25 @@ describe("go godoc", function()
       "}",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate godoc for struct type", function()
+    local contents = {
+      "type Server struct {",
+      "\tHost string",
+      "\tPort int",
+      "}",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "go"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 5 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "// Server description",
+      "type Server struct {",
+      "\tHost string",
+      "\tPort int",
+      "}",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
 end)

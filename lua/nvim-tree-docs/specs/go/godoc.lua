@@ -10,6 +10,7 @@ local module = {
     slots = {
       ["function"] = {},
       method = {},
+      type = {},
     },
   }),
   ["doc-lang"] = nil,
@@ -31,6 +32,11 @@ module.templates["function"] = {
 }
 
 module.templates.method = {
+  "description",
+  "%content%",
+}
+
+module.templates.type = {
   "description",
   "%content%",
 }
