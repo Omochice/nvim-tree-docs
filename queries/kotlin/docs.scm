@@ -11,6 +11,10 @@
 (class_declaration
   (type_identifier) @class.name) @class.definition
 
+; Object declarations
+(object_declaration
+  (type_identifier) @class.name) @class.definition
+
 ; Function return statement
 (function_declaration
   (function_body
