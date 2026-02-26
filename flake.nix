@@ -40,6 +40,17 @@
             settings.global.excludes = [
               "_sources/**"
             ];
+            settings.formatter = {
+              # keep-sorted start block=yes
+              tombi = {
+                command = "${pkgs.lib.getExe pkgs.tombi}";
+                options = [
+                  "format"
+                ];
+                includes = [ "*.toml" ];
+              };
+              # keep-sorted end
+            };
             programs = {
               # keep-sorted start block=yes
               fish_indent.enable = true;
@@ -58,6 +69,7 @@
                   builtins.fromTOML
                 ];
               };
+              toml-sort.enable = true;
               yamlfmt = {
                 enable = true;
                 settings = {
