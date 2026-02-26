@@ -164,7 +164,7 @@
             zizmor .github/workflows .github/actions
           '';
           check-renovate-config = runAs "check-renovate-config" devPackages.renovate ''
-            renovate-config-validator --strict renovate.json
+            renovate-config-validator --strict
           '';
           test = runAs "vusted-test" devPackages.neovim ''
             vusted test
