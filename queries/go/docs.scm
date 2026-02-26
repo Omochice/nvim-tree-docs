@@ -14,6 +14,11 @@
   (var_spec
     name: (identifier) @variable.name)) @variable.definition
 
+; Constant declarations
+(const_declaration
+  (const_spec
+    name: (identifier) @variable.name)) @variable.definition
+
 ; Method declarations
 (method_declaration
   name: (field_identifier) @method.name

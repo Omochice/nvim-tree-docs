@@ -116,4 +116,19 @@ describe("go godoc", function()
       "var DefaultTimeout = 30",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate godoc for constant", function()
+    local contents = {
+      "const MaxRetries = 3",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "go"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 6 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "// MaxRetries description",
+      "const MaxRetries = 3",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
 end)
