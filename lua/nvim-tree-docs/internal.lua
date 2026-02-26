@@ -66,6 +66,7 @@ end
 
 -- Language specifications mapping
 local language_specs = {
+  go = "godoc",
   javascript = "jsdoc",
   kotlin = "kdoc",
   lua = "luadoc",
