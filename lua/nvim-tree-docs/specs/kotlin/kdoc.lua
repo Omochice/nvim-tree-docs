@@ -14,6 +14,7 @@ local module = {
         returns = true,
       },
       class = {},
+      variable = {},
     },
   }),
   ["doc-lang"] = nil,
@@ -39,6 +40,13 @@ module.templates["function"] = {
 }
 
 module.templates.class = {
+  "doc-start",
+  "description",
+  "doc-end",
+  "%content%",
+}
+
+module.templates.variable = {
   "doc-start",
   "description",
   "doc-end",

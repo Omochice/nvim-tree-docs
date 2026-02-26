@@ -2,6 +2,11 @@
 (function_declaration
   (simple_identifier) @function.name) @function.definition
 
+; Property declarations
+(property_declaration
+  (variable_declaration
+    (simple_identifier) @variable.name)) @variable.definition
+
 ; Class declarations (also covers interfaces)
 (class_declaration
   (type_identifier) @class.name) @class.definition

@@ -111,4 +111,21 @@ describe("kotlin kdoc", function()
       "}",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate kdoc for property", function()
+    local contents = {
+      'val name = "hello"',
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "kotlin"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 4 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "/**",
+      " * The name description",
+      " */",
+      'val name = "hello"',
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
 end)
