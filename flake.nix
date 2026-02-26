@@ -42,6 +42,15 @@
             ];
             settings.formatter = {
               # keep-sorted start block=yes
+              rumdl = {
+                command = "${pkgs.lib.getExe pkgs.rumdl}";
+                options = [
+                  "fmt"
+                  "--config"
+                  (builtins.toString ./.rumdl.toml)
+                ];
+                includes = [ "*.md" ];
+              };
               tombi = {
                 command = "${pkgs.lib.getExe pkgs.tombi}";
                 options = [
@@ -55,7 +64,6 @@
               # keep-sorted start block=yes
               fish_indent.enable = true;
               keep-sorted.enable = true;
-              mdformat.enable = true;
               nixfmt.enable = true;
               oxfmt = {
                 enable = true;
