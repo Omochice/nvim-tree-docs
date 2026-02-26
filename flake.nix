@@ -43,13 +43,13 @@
             programs = {
               # keep-sorted start block=yes
               fish_indent.enable = true;
-              formatjson5 = {
-                enable = true;
-                indent = 2;
-              };
               keep-sorted.enable = true;
               mdformat.enable = true;
               nixfmt.enable = true;
+              oxfmt = {
+                enable = true;
+                includes = [ "*.json" ];
+              };
               shfmt.enable = true;
               stylua = {
                 enable = true;
