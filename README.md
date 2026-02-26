@@ -11,7 +11,7 @@
 (This screencast is using [kawarimidoll/autoplay.vim](https://github.com/kawarimidoll/autoplay.vim))
 
 > [!NOTE]
-> This plugin requires nvim-treesitter's `master` branch.
+> This plugin requires nvim-treesitter's `main` branch.
 
 Highly configurable documentation generator using treesitter.
 
@@ -22,7 +22,7 @@ This plugin is experimental!
 nvim-tree-docs is a module for the `nvim-treesitter` plugin. You can install both by doing (vim-plug):
 
 ```vim
-Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'master' }
+Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'main' }
 Plug 'Omochice/nvim-tree-docs'
 ```
 
