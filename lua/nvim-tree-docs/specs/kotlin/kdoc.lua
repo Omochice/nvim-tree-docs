@@ -13,6 +13,7 @@ local module = {
         param = true,
         returns = true,
       },
+      class = {},
     },
   }),
   ["doc-lang"] = nil,
@@ -33,6 +34,13 @@ module.templates["function"] = {
   "description",
   "param",
   "returns",
+  "doc-end",
+  "%content%",
+}
+
+module.templates.class = {
+  "doc-start",
+  "description",
   "doc-end",
   "%content%",
 }

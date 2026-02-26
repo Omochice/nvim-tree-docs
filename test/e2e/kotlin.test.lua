@@ -71,4 +71,23 @@ describe("kotlin kdoc", function()
       "}",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate kdoc for class", function()
+    local contents = {
+      "class MyClass {",
+      "}",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "kotlin"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 6 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "/**",
+      " * The MyClass description",
+      " */",
+      "class MyClass {",
+      "}",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
 end)

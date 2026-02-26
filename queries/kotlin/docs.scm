@@ -2,6 +2,10 @@
 (function_declaration
   (simple_identifier) @function.name) @function.definition
 
+; Class declarations (also covers interfaces)
+(class_declaration
+  (type_identifier) @class.name) @class.definition
+
 ; Function return statement
 (function_declaration
   (function_body
