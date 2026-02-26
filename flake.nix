@@ -40,17 +40,35 @@
             settings.global.excludes = [
               "_sources/**"
             ];
+            settings.formatter = {
+              # keep-sorted start block=yes
+              rumdl = {
+                command = "${pkgs.lib.getExe pkgs.rumdl}";
+                options = [
+                  "fmt"
+                  "--config"
+                  (builtins.toString ./.rumdl.toml)
+                ];
+                includes = [ "*.md" ];
+              };
+              tombi = {
+                command = "${pkgs.lib.getExe pkgs.tombi}";
+                options = [
+                  "format"
+                  "--offline"
+                ];
+                includes = [ "*.toml" ];
+              };
+              # keep-sorted end
+            };
             programs = {
               # keep-sorted start block=yes
-              fish_indent.enable = true;
               keep-sorted.enable = true;
-              mdformat.enable = true;
               nixfmt.enable = true;
               oxfmt = {
                 enable = true;
                 includes = [ "*.json" ];
               };
-              shfmt.enable = true;
               stylua = {
                 enable = true;
                 settings = pkgs.lib.pipe ./stylua.toml [
@@ -58,6 +76,7 @@
                   builtins.fromTOML
                 ];
               };
+              toml-sort.enable = true;
               yamlfmt = {
                 enable = true;
                 settings = {
