@@ -82,4 +82,23 @@ describe("go godoc", function()
       "}",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate godoc for interface type", function()
+    local contents = {
+      "type Reader interface {",
+      "\tRead(p []byte) (n int, err error)",
+      "}",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "go"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 5 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "// Reader description",
+      "type Reader interface {",
+      "\tRead(p []byte) (n int, err error)",
+      "}",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
 end)
