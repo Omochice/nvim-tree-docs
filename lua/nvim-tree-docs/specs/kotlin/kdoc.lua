@@ -11,6 +11,7 @@ local module = {
     slots = {
       ["function"] = {
         param = true,
+        returns = true,
       },
     },
   }),
@@ -31,6 +32,7 @@ module.templates["function"] = {
   "doc-start",
   "description",
   "param",
+  "returns",
   "doc-end",
   "%content%",
 }
@@ -78,5 +80,14 @@ module.processors.param = {
       )
     end
     return result
+  end,
+}
+
+module.processors.returns = {
+  when = function(context)
+    return context.return_statement
+  end,
+  build = function()
+    return module.__build(" * @return ", { content = "The result", mark = "tabstop" })
   end,
 }
