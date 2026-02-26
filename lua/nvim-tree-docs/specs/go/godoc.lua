@@ -11,6 +11,7 @@ local module = {
       ["function"] = {},
       method = {},
       type = {},
+      variable = {},
     },
   }),
   ["doc-lang"] = nil,
@@ -37,6 +38,11 @@ module.templates.method = {
 }
 
 module.templates.type = {
+  "description",
+  "%content%",
+}
+
+module.templates.variable = {
   "description",
   "%content%",
 }

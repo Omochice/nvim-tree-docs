@@ -101,4 +101,19 @@ describe("go godoc", function()
       "}",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate godoc for variable", function()
+    local contents = {
+      "var DefaultTimeout = 30",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "go"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 4 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "// DefaultTimeout description",
+      "var DefaultTimeout = 30",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
 end)
