@@ -9,7 +9,60 @@ local templates = require("nvim-tree-docs.template")
 local collectors = require("nvim-tree-docs.collector")
 local editing = require("nvim-tree-docs.editing")
 local configure = require("nvim-tree-docs.configure")
-local queries = require("nvim-treesitter.query")
+
+--- Collect docs query results grouped by capture hierarchy
+--- @param bufnr number: Buffer number
+--- @return table: List of grouped matches
+local function collect_docs_matches(bufnr)
+  local lang = vim.api.nvim_get_option_value("ft", { buf = bufnr })
+  local query = vim.treesitter.query.get(lang, "docs")
+  if not query then
+    return {}
+  end
+
+  local parser = vim.treesitter.get_parser(bufnr, lang)
+  local tree = parser:parse()[1]
+  local root = tree:root()
+
+  local results = {}
+
+  for _, match, metadata in query:iter_matches(root, bufnr, 0, -1, { all = true }) do
+    local current_match = {}
+
+    for id, nodes in pairs(match) do
+      local capture_name = query.captures[id]
+      local capture_metadata = metadata[id] or {}
+
+      for _, node in ipairs(nodes) do
+        local parts = vim.split(capture_name, ".", { plain = true })
+        local target = current_match
+        for i = 1, #parts - 1 do
+          target[parts[i]] = target[parts[i]] or {}
+          target = target[parts[i]]
+        end
+
+        local leaf_key = parts[#parts]
+        local entry = { node = node, metadata = capture_metadata }
+
+        if target[leaf_key] then
+          if target[leaf_key].node then
+            target[leaf_key] = { target[leaf_key], entry }
+          else
+            table.insert(target[leaf_key], entry)
+          end
+        else
+          target[leaf_key] = entry
+        end
+      end
+    end
+
+    if next(current_match) then
+      table.insert(results, current_match)
+    end
+  end
+
+  return results
+end
 
 -- Language specifications mapping
 local language_specs = {
@@ -118,7 +171,7 @@ local function collect_docs(bufnr)
   end
 
   local collector = collectors.new_collector()
-  local doc_matches = queries.collect_group_results(bufnr, "docs")
+  local doc_matches = collect_docs_matches(bufnr)
 
   for _, item in ipairs(doc_matches) do
     for kind, match in pairs(item) do

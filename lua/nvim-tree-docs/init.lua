@@ -3,7 +3,10 @@ local M = {}
 local group = vim.api.nvim_create_augroup("nvim-tree-docs", { clear = true })
 
 local function is_supported(lang)
-  return require("nvim-treesitter.query").get_query(lang, "docs") ~= nil
+  if not lang then
+    return false
+  end
+  return vim.treesitter.query.get(lang, "docs") ~= nil
 end
 
 --- @param opts? Option
