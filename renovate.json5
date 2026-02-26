@@ -1,8 +1,0 @@
-{
-  $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: [
-    "github>Omochice/personal-renovate-config#v1.11.3",
-    "github>Omochice/personal-renovate-config:nix#v1.11.3",
-  ],
-  forkProcessing: "enabled",
-}
