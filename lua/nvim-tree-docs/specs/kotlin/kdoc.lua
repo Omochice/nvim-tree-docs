@@ -101,7 +101,7 @@ module.processors.param = {
 
 module.processors.returns = {
   when = function(context)
-    return context.return_statement
+    return context.return_type
   end,
   build = function()
     return module.__build(" * @return ", { content = "The result", mark = "tabstop" })

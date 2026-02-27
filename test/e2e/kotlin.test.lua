@@ -128,6 +128,27 @@ describe("kotlin kdoc", function()
       'val name = "hello"',
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate kdoc with @return for expression-bodied function", function()
+    local contents = {
+      "fun add(a: Int, b: Int): Int = a + b",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "kotlin"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 4 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "/**",
+      " * The add description",
+      " *",
+      " * @param a The a param",
+      " * @param b The b param",
+      " * @return The result",
+      " */",
+      "fun add(a: Int, b: Int): Int = a + b",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
   it("should generate kdoc for object", function()
     local contents = {
       "object Singleton {",

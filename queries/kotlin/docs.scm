@@ -15,11 +15,9 @@
 (object_declaration
   (type_identifier) @class.name) @class.definition
 
-; Function return statement
+; Function return type
 (function_declaration
-  (function_body
-    (statements
-      (jump_expression) @function.return_statement))) @function.definition
+  (user_type) @function.return_type) @function.definition
 
 ; Function parameters
 (function_declaration
