@@ -19,6 +19,21 @@
 (function_declaration
   (user_type) @function.return_type) @function.definition
 
+; Function body endpoint
+(function_declaration
+  ((function_body) @function.end_point)
+  (#set! function.end_point.position "start")) @function.definition
+
+; Class body endpoint
+(class_declaration
+  ((class_body) @class.end_point)
+  (#set! class.end_point.position "start")) @class.definition
+
+; Object body endpoint
+(object_declaration
+  ((class_body) @class.end_point)
+  (#set! class.end_point.position "start")) @class.definition
+
 ; Function parameters
 (function_declaration
   (function_value_parameters
