@@ -149,6 +149,30 @@ describe("kotlin kdoc", function()
       "fun add(a: Int, b: Int): Int = a + b",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate kdoc with @return for function with nullable return type", function()
+    local contents = {
+      "fun find(id: Int): String? {",
+      "    return null",
+      "}",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "kotlin"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 4 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "/**",
+      " * The find description",
+      " *",
+      " * @param id The id param",
+      " * @return The result",
+      " */",
+      "fun find(id: Int): String? {",
+      "    return null",
+      "}",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
   it("should generate kdoc for object", function()
     local contents = {
       "object Singleton {",
