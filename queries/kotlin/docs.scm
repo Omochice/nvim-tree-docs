@@ -17,7 +17,7 @@
 
 ; Function return type
 (function_declaration
-  [(user_type) (nullable_type)] @function.return_type) @function.definition
+  [(user_type) (nullable_type) (function_type)] @function.return_type) @function.definition
 
 ; Function body endpoint
 (function_declaration

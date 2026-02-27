@@ -173,6 +173,29 @@ describe("kotlin kdoc", function()
       "}",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate kdoc with @return for function returning function type", function()
+    local contents = {
+      "fun create(): (Int) -> String {",
+      "    return { it.toString() }",
+      "}",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "kotlin"):parse()
+    vim.api.nvim_win_set_cursor(0, { 1, 4 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "/**",
+      " * The create description",
+      " *",
+      " * @return The result",
+      " */",
+      "fun create(): (Int) -> String {",
+      "    return { it.toString() }",
+      "}",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
   it("should generate kdoc for object", function()
     local contents = {
       "object Singleton {",
