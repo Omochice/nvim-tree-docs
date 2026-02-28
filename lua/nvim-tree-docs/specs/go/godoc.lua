@@ -1,3 +1,5 @@
+-- GoDoc specification for Go
+-- Generates GoDoc-style documentation comments for Go code
 local template_mod = require("nvim-tree-docs.template")
 
 local mod_name = "go.godoc"
