@@ -149,6 +149,32 @@
               --set VUSTED_ARGS "--headless --clean -u ${customInitVim}/init.vim"
           '';
         };
+        luacov = pkgs.lua51Packages.luacov;
+        customInitVimWithCoverage = pkgs.stdenvNoCC.mkDerivation {
+          name = "init-vim-coverage";
+          src = ./.;
+          buildCommand =
+            let
+              luacovPath = "${luacov}/share/lua/5.1";
+              init-vim = ''
+                set runtimepath+=${nvim-treesitter}
+                lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;' .. package.path
+              '';
+            in
+            ''
+              mkdir -p $out
+              echo "${init-vim}" > $out/init.vim
+            '';
+        };
+        wrappedVustedWithCoverage = pkgs.symlinkJoin {
+          name = "vusted-coverage";
+          paths = [ pkgs.lua51Packages.vusted ];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          postBuild = ''
+            wrapProgram $out/bin/vusted \
+              --set VUSTED_ARGS "--headless --clean -u ${customInitVimWithCoverage}/init.vim"
+          '';
+        };
         devPackages = rec {
           # keep-sorted start block=yes
           actions = [
@@ -187,6 +213,10 @@
           '';
           test = runAs "vusted-test" devPackages.neovim ''
             vusted test
+          '';
+          coverage = runAs "vusted-coverage" [ wrappedVustedWithCoverage pkgs.neovim luacov ] ''
+            vusted test --coverage
+            luacov
           '';
           update-nvim-treesitter = runAs "update-nvim-treesitter" devPackages.nvfetcher ''
             nvfetcher
