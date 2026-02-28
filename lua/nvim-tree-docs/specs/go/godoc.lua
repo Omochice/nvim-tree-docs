@@ -50,7 +50,10 @@ module.templates.variable = {
 module.processors.description = {
   implicit = true,
   build = function(context)
-    local name = context.name and context["get-text"](context.name) or "Description"
-    return "// " .. name .. " description"
+    local name = context.name and context["get-text"](context.name)
+    if name and name ~= "" then
+      return "// " .. name .. " description"
+    end
+    return "// Description"
   end,
 }
