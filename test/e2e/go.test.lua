@@ -150,4 +150,23 @@ describe("go godoc", function()
       "const MaxRetries = 3",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
   end)
+  it("should generate godoc for grouped constant declaration", function()
+    local contents = {
+      "const (",
+      "\tMaxRetries = 3",
+      ")",
+    }
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, contents)
+    vim.treesitter.get_parser(bufnr, "go"):parse()
+    vim.api.nvim_win_set_cursor(0, { 2, 1 })
+
+    require("nvim-tree-docs").doc_node_at_cursor()
+
+    assert.same({
+      "const (",
+      "\t// MaxRetries description",
+      "\tMaxRetries = 3",
+      ")",
+    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+  end)
 end)

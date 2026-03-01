@@ -14,9 +14,8 @@
   name: (identifier) @variable.name) @variable.definition
 
 ; Constant declarations
-(const_declaration
-  (const_spec
-    name: (identifier) @variable.name)) @variable.definition
+(const_spec
+  name: (identifier) @variable.name) @variable.definition
 
 ; Method declarations
 (method_declaration
