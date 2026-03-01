@@ -149,6 +149,39 @@
               --set VUSTED_ARGS "--headless --clean -u ${customInitVim}/init.vim"
           '';
         };
+        luacov = pkgs.lua51Packages.luacov;
+        luacov-reporter-lcov = pkgs.fetchFromGitHub {
+          owner = "daurnimator";
+          repo = "luacov-reporter-lcov";
+          rev = "4d881ddb4eeec5ac0cd7d4b7679e3e59f9ac5745";
+          hash = "sha256-o+9E+pMVpWpd4M0gBnU0g9OA7UZjNbuqFa6WG2j73nE=";
+        };
+        customInitVimWithCoverage = pkgs.stdenvNoCC.mkDerivation {
+          name = "init-vim-coverage";
+          src = ./.;
+          buildCommand =
+            let
+              luacovPath = "${luacov}/share/lua/5.1";
+              lcovReporterPath = "${luacov-reporter-lcov}";
+              init-vim = ''
+                set runtimepath+=${nvim-treesitter}
+                lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;${lcovReporterPath}/?.lua;${lcovReporterPath}/?/init.lua;' .. package.path
+              '';
+            in
+            ''
+              mkdir -p $out
+              echo "${init-vim}" > $out/init.vim
+            '';
+        };
+        wrappedVustedWithCoverage = pkgs.symlinkJoin {
+          name = "vusted-coverage";
+          paths = [ pkgs.lua51Packages.vusted ];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          postBuild = ''
+            wrapProgram $out/bin/vusted \
+              --set VUSTED_ARGS "--headless --clean -u ${customInitVimWithCoverage}/init.vim"
+          '';
+        };
         devPackages = rec {
           # keep-sorted start block=yes
           actions = [
@@ -188,6 +221,20 @@
           test = runAs "vusted-test" devPackages.neovim ''
             vusted test
           '';
+          coverage =
+            runAs "vusted-coverage"
+              [
+                wrappedVustedWithCoverage
+                pkgs.neovim
+                luacov
+                pkgs.gnused
+              ]
+              ''
+                vusted test --coverage
+                export LUA_PATH="${luacov-reporter-lcov}/?.lua;${luacov-reporter-lcov}/?/init.lua;;"
+                luacov -r lcov
+                sed -i "s|SF:$PWD/|SF:|g" luacov.report.out
+              '';
           update-nvim-treesitter = runAs "update-nvim-treesitter" devPackages.nvfetcher ''
             nvfetcher
           '';
