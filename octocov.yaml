@@ -1,0 +1,21 @@
+coverage:
+  paths:
+    - coverage/luacov.report.out
+
+codeToTestRatio:
+  code:
+    - "lua/**/*.lua"
+  test:
+    - "test/**/*.lua"
+
+comment:
+  hideFooterLink: false
+
+diff:
+  datastores:
+    - artifact://${GITHUB_REPOSITORY}
+
+report:
+  if: is_default_branch
+  datastores:
+    - artifact://${GITHUB_REPOSITORY}
