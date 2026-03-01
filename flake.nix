@@ -221,11 +221,20 @@
           test = runAs "vusted-test" devPackages.neovim ''
             vusted test
           '';
-          coverage = runAs "vusted-coverage" [ wrappedVustedWithCoverage pkgs.neovim luacov ] ''
-            vusted test --coverage
-            export LUA_PATH="${luacov-reporter-lcov}/?.lua;${luacov-reporter-lcov}/?/init.lua;;"
-            luacov -r lcov
-          '';
+          coverage =
+            runAs "vusted-coverage"
+              [
+                wrappedVustedWithCoverage
+                pkgs.neovim
+                luacov
+                pkgs.gnused
+              ]
+              ''
+                vusted test --coverage
+                export LUA_PATH="${luacov-reporter-lcov}/?.lua;${luacov-reporter-lcov}/?/init.lua;;"
+                luacov -r lcov
+                sed -i "s|SF:$PWD/|SF:|g" luacov.report.out
+              '';
           update-nvim-treesitter = runAs "update-nvim-treesitter" devPackages.nvfetcher ''
             nvfetcher
           '';
