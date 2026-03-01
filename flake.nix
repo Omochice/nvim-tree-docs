@@ -150,15 +150,22 @@
           '';
         };
         luacov = pkgs.lua51Packages.luacov;
+        luacov-reporter-lcov = pkgs.fetchFromGitHub {
+          owner = "daurnimator";
+          repo = "luacov-reporter-lcov";
+          rev = "4d881ddb4eeec5ac0cd7d4b7679e3e59f9ac5745";
+          hash = "sha256-o+9E+pMVpWpd4M0gBnU0g9OA7UZjNbuqFa6WG2j73nE=";
+        };
         customInitVimWithCoverage = pkgs.stdenvNoCC.mkDerivation {
           name = "init-vim-coverage";
           src = ./.;
           buildCommand =
             let
               luacovPath = "${luacov}/share/lua/5.1";
+              lcovReporterPath = "${luacov-reporter-lcov}";
               init-vim = ''
                 set runtimepath+=${nvim-treesitter}
-                lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;' .. package.path
+                lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;${lcovReporterPath}/?.lua;${lcovReporterPath}/?/init.lua;' .. package.path
               '';
             in
             ''
@@ -216,7 +223,8 @@
           '';
           coverage = runAs "vusted-coverage" [ wrappedVustedWithCoverage pkgs.neovim luacov ] ''
             vusted test --coverage
-            luacov
+            export LUA_PATH="${luacov-reporter-lcov}/?.lua;${luacov-reporter-lcov}/?/init.lua;;"
+            luacov -r lcov
           '';
           update-nvim-treesitter = runAs "update-nvim-treesitter" devPackages.nvfetcher ''
             nvfetcher
