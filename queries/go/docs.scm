@@ -10,9 +10,8 @@
     name: (type_identifier) @type.name)) @type.definition
 
 ; Variable declarations
-(var_declaration
-  (var_spec
-    name: (identifier) @variable.name)) @variable.definition
+(var_spec
+  name: (identifier) @variable.name) @variable.definition
 
 ; Constant declarations
 (const_declaration
