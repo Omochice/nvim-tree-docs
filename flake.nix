@@ -126,6 +126,20 @@
             ++ pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
           }
         );
+        mini-nvim = pkgs.stdenvNoCC.mkDerivation {
+          inherit (sources.mini-nvim) pname version src;
+          doBuild = false;
+          buildPhase = ":";
+          installPhase = ''
+            runHook preInstall
+            mkdir -p $out
+            cp -r . $out/
+            runHook postInstall
+          '';
+          meta = {
+            platforms = pkgs.lib.platforms.all;
+          };
+        };
         mkInitVim =
           extraConfig:
           pkgs.writeTextFile {
@@ -133,6 +147,7 @@
             destination = "/init.vim";
             text = ''
               set runtimepath+=${nvim-treesitter}
+              set runtimepath+=${mini-nvim}
               ${extraConfig}
             '';
           };
@@ -156,7 +171,10 @@
             luacovPath = "${luacov}/share/lua/5.1";
             lcovReporterPath = "${luacov-reporter-lcov}";
           in
-          mkInitVim "lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;${lcovReporterPath}/?.lua;${lcovReporterPath}/?/init.lua;' .. package.path";
+          mkInitVim ''
+            lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;${lcovReporterPath}/?.lua;${lcovReporterPath}/?/init.lua;' .. package.path
+            lua require("luacov")
+          '';
         wrappedVustedWithCoverage = mkWrappedVusted "vusted-coverage" customInitVimWithCoverage;
         devPackages = rec {
           # keep-sorted start block=yes
@@ -194,19 +212,18 @@
           check-renovate-config = runAs "check-renovate-config" devPackages.renovate ''
             renovate-config-validator --strict
           '';
-          test = runAs "vusted-test" devPackages.neovim ''
-            vusted test
+          test = runAs "mini-test" [ pkgs.neovim ] ''
+            nvim --headless --clean -u ${customInitVim}/init.vim -l scripts/run_tests.lua
           '';
           coverage =
-            runAs "vusted-coverage"
+            runAs "mini-test-coverage"
               [
-                wrappedVustedWithCoverage
                 pkgs.neovim
                 luacov
                 pkgs.gnused
               ]
               ''
-                vusted test --coverage
+                nvim --headless --clean -u ${customInitVimWithCoverage}/init.vim -l scripts/run_tests.lua
                 export LUA_PATH="${luacov-reporter-lcov}/?.lua;${luacov-reporter-lcov}/?/init.lua;;"
                 luacov -r lcov
                 sed -i "s|SF:$PWD/|SF:|g" luacov.report.out
