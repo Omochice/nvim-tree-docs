@@ -18,7 +18,7 @@ describe("typescript jsdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The sample description",
       " *",
@@ -29,7 +29,7 @@ describe("typescript jsdoc", function()
       "function sample(a: string, b: number): string {",
       "  return a + b;",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
 
   it("should generate jsdoc for variable", function()
@@ -42,12 +42,12 @@ describe("typescript jsdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The sample description",
       " */",
       "const sample = 42;",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
 
   it("should generate jsdoc for class", function()
@@ -62,14 +62,14 @@ describe("typescript jsdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The A description",
       " */",
       "class A {",
       "  foo = 42;",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
 
   it("should generate jsdoc for method", function()
@@ -84,13 +84,13 @@ describe("typescript jsdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "class A {",
       "  /**",
       "   * The foo description",
       "   */",
       "  foo = 42;",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
 end)
