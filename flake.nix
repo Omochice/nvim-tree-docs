@@ -198,7 +198,7 @@
             renovate-config-validator --strict
           '';
           test = runAs "mini-test" [ pkgs.neovim ] ''
-            nvim --headless --clean -u ${customInitVim}/init.vim -l scripts/run_tests.lua
+            nvim --headless --clean -u ${customInitVim}/init.vim -l test/run.lua
           '';
           coverage =
             runAs "mini-test-coverage"
@@ -208,7 +208,7 @@
                 pkgs.gnused
               ]
               ''
-                nvim --headless --clean -u ${customInitVimWithCoverage}/init.vim -l scripts/run_tests.lua
+                nvim --headless --clean -u ${customInitVimWithCoverage}/init.vim -l test/run.lua
                 export LUA_PATH="${luacov-reporter-lcov}/?.lua;${luacov-reporter-lcov}/?/init.lua;;"
                 luacov -r lcov
                 sed -i "s|SF:$PWD/|SF:|g" luacov.report.out
