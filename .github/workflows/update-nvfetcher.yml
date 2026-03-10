@@ -1,0 +1,62 @@
+name: Update nvfetcher sources
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch: null
+
+jobs:
+  list-packages:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      packages: ${{ steps.list.outputs.packages }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - id: list
+        run: |
+          packages=$(grep '^\[' nvfetcher.toml | tr -d '[]' | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          echo "packages=$packages" >> "$GITHUB_OUTPUT"
+
+  update:
+    timeout-minutes: 10
+    needs: list-packages
+    runs-on: ubuntu-latest
+    permissions: {}
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.list-packages.outputs.packages) }}
+    steps:
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        with:
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Setup nix
+        uses: ./.github/actions/setup-nix
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+      - name: Run nvfetcher for ${{ matrix.package }}
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: nix develop --command nvfetcher -k "$PACKAGE"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8.1.0
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          branch: nvfetcher-update-${{ matrix.package }}
+          commit-message: "chore(deps): update ${{ matrix.package }} via nvfetcher"
+          title: "chore(deps): update ${{ matrix.package }} via nvfetcher"
+          body: Automated update of `${{ matrix.package }}` by nvfetcher.
+          sign-commits: true
+          delete-branch: true
