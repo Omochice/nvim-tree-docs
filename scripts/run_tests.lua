@@ -4,7 +4,7 @@ require("mini.test").setup({
   collect = {
     emulate_busted = true,
     find_files = function()
-      return vim.fn.globpath("test", "test_*.lua", true, true)
+      return vim.fn.globpath("test/e2e", "*.test.lua", true, true)
     end,
   },
   execute = {
