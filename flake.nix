@@ -126,20 +126,17 @@
             ++ pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
           }
         );
-        customInitVim = pkgs.stdenvNoCC.mkDerivation {
-          name = "init-vim";
-          src = ./.;
-          buildCommand =
-            let
-              init-vim = ''
-                set runtimepath+=${nvim-treesitter}
-              '';
-            in
-            ''
-              mkdir -p $out
-              echo "${init-vim}" > $out/init.vim
+        mkInitVim =
+          extraConfig:
+          pkgs.writeTextFile {
+            name = "init-vim";
+            destination = "/init.vim";
+            text = ''
+              set runtimepath+=${nvim-treesitter}
+              ${extraConfig}
             '';
-        };
+          };
+        customInitVim = mkInitVim "";
         wrappedVusted = pkgs.symlinkJoin {
           name = "vusted-custom";
           paths = [ pkgs.lua51Packages.vusted ];
@@ -156,23 +153,12 @@
           rev = "4d881ddb4eeec5ac0cd7d4b7679e3e59f9ac5745";
           hash = "sha256-o+9E+pMVpWpd4M0gBnU0g9OA7UZjNbuqFa6WG2j73nE=";
         };
-        customInitVimWithCoverage = pkgs.stdenvNoCC.mkDerivation {
-          name = "init-vim-coverage";
-          src = ./.;
-          buildCommand =
-            let
-              luacovPath = "${luacov}/share/lua/5.1";
-              lcovReporterPath = "${luacov-reporter-lcov}";
-              init-vim = ''
-                set runtimepath+=${nvim-treesitter}
-                lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;${lcovReporterPath}/?.lua;${lcovReporterPath}/?/init.lua;' .. package.path
-              '';
-            in
-            ''
-              mkdir -p $out
-              echo "${init-vim}" > $out/init.vim
-            '';
-        };
+        customInitVimWithCoverage =
+          let
+            luacovPath = "${luacov}/share/lua/5.1";
+            lcovReporterPath = "${luacov-reporter-lcov}";
+          in
+          mkInitVim "lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;${lcovReporterPath}/?.lua;${lcovReporterPath}/?/init.lua;' .. package.path";
         wrappedVustedWithCoverage = pkgs.symlinkJoin {
           name = "vusted-coverage";
           paths = [ pkgs.lua51Packages.vusted ];
