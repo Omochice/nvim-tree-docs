@@ -147,12 +147,7 @@
           '';
         };
         luacov = pkgs.lua51Packages.luacov;
-        luacov-reporter-lcov = pkgs.fetchFromGitHub {
-          owner = "daurnimator";
-          repo = "luacov-reporter-lcov";
-          rev = "4d881ddb4eeec5ac0cd7d4b7679e3e59f9ac5745";
-          hash = "sha256-o+9E+pMVpWpd4M0gBnU0g9OA7UZjNbuqFa6WG2j73nE=";
-        };
+        luacov-reporter-lcov = sources.luacov-reporter-lcov.src;
         customInitVimWithCoverage =
           let
             luacovPath = "${luacov}/share/lua/5.1";
