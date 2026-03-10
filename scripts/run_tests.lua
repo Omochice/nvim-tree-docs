@@ -1,3 +1,5 @@
+vim.cmd("set runtimepath+=" .. vim.fn.getcwd())
+
 require("mini.test").setup({
   collect = {
     emulate_busted = true,
