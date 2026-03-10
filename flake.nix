@@ -126,6 +126,20 @@
             ++ pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
           }
         );
+        mini-nvim = pkgs.stdenvNoCC.mkDerivation {
+          inherit (sources.mini-nvim) pname version src;
+          doBuild = false;
+          buildPhase = ":";
+          installPhase = ''
+            runHook preInstall
+            mkdir -p $out
+            cp -r . $out/
+            runHook postInstall
+          '';
+          meta = {
+            platforms = pkgs.lib.platforms.all;
+          };
+        };
         mkInitVim =
           extraConfig:
           pkgs.writeTextFile {
@@ -133,22 +147,11 @@
             destination = "/init.vim";
             text = ''
               set runtimepath+=${nvim-treesitter}
+              set runtimepath+=${mini-nvim}
               ${extraConfig}
             '';
           };
         customInitVim = mkInitVim "";
-        mkWrappedVusted =
-          name: initVim:
-          pkgs.symlinkJoin {
-            inherit name;
-            paths = [ pkgs.lua51Packages.vusted ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              wrapProgram $out/bin/vusted \
-                --set VUSTED_ARGS "--headless --clean -u ${initVim}/init.vim"
-            '';
-          };
-        wrappedVusted = mkWrappedVusted "vusted-custom" customInitVim;
         luacov = pkgs.lua51Packages.luacov;
         luacov-reporter-lcov = sources.luacov-reporter-lcov.src;
         customInitVimWithCoverage =
@@ -156,8 +159,10 @@
             luacovPath = "${luacov}/share/lua/5.1";
             lcovReporterPath = "${luacov-reporter-lcov}";
           in
-          mkInitVim "lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;${lcovReporterPath}/?.lua;${lcovReporterPath}/?/init.lua;' .. package.path";
-        wrappedVustedWithCoverage = mkWrappedVusted "vusted-coverage" customInitVimWithCoverage;
+          mkInitVim ''
+            lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;${lcovReporterPath}/?.lua;${lcovReporterPath}/?/init.lua;' .. package.path
+            lua require("luacov")
+          '';
         devPackages = rec {
           # keep-sorted start block=yes
           actions = [
@@ -167,8 +172,6 @@
           ];
           neovim = [
             pkgs.neovim
-            # pkgs.lua51Packages.luarocks-nix
-            wrappedVusted
           ];
           nvfetcher = [
             pkgs.nvfetcher
@@ -194,19 +197,18 @@
           check-renovate-config = runAs "check-renovate-config" devPackages.renovate ''
             renovate-config-validator --strict
           '';
-          test = runAs "vusted-test" devPackages.neovim ''
-            vusted test
+          test = runAs "mini-test" [ pkgs.neovim ] ''
+            nvim --headless --clean -u ${customInitVim}/init.vim -l test/run.lua
           '';
           coverage =
-            runAs "vusted-coverage"
+            runAs "mini-test-coverage"
               [
-                wrappedVustedWithCoverage
                 pkgs.neovim
                 luacov
                 pkgs.gnused
               ]
               ''
-                vusted test --coverage
+                nvim --headless --clean -u ${customInitVimWithCoverage}/init.vim -l test/run.lua
                 export LUA_PATH="${luacov-reporter-lcov}/?.lua;${luacov-reporter-lcov}/?/init.lua;;"
                 luacov -r lcov
                 sed -i "s|SF:$PWD/|SF:|g" luacov.report.out

@@ -20,6 +20,27 @@
         },
         "version": "4d881ddb4eeec5ac0cd7d4b7679e3e59f9ac5745"
     },
+    "mini-nvim": {
+        "cargoLock": null,
+        "date": "2026-03-09",
+        "extract": null,
+        "name": "mini-nvim",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "echasnovski",
+            "repo": "mini.nvim",
+            "rev": "9d359222b3643f1fccbd8f3180445842e1cae00b",
+            "sha256": "sha256-uZ4KXLw/0hN/0nY16Oh1zzI5gBSyX5+lcx7frECHT/w=",
+            "sparseCheckout": [],
+            "type": "github"
+        },
+        "version": "9d359222b3643f1fccbd8f3180445842e1cae00b"
+    },
     "nvim-treesitter": {
         "cargoLock": null,
         "date": "2026-03-07",

@@ -17,13 +17,13 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The main description",
       " */",
       "fun main() {",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
   it("should generate kdoc with @param for function with parameters", function()
     local contents = {
@@ -36,7 +36,7 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The sample description",
       " *",
@@ -45,7 +45,7 @@ describe("kotlin kdoc", function()
       " */",
       "fun sample(a: Int, b: String) {",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
   it("should generate kdoc with @return for function with return", function()
     local contents = {
@@ -59,7 +59,7 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The greet description",
       " *",
@@ -69,7 +69,7 @@ describe("kotlin kdoc", function()
       "fun greet(name: String): String {",
       '    return "Hello, $name"',
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
   it("should generate kdoc for class", function()
     local contents = {
@@ -82,13 +82,13 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The MyClass description",
       " */",
       "class MyClass {",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
   it("should generate kdoc for interface", function()
     local contents = {
@@ -102,14 +102,14 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The Repository description",
       " */",
       "interface Repository {",
       "    fun findById(id: Long): Any",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
   it("should generate kdoc for property", function()
     local contents = {
@@ -121,12 +121,12 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The name description",
       " */",
       'val name = "hello"',
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
   it("should generate kdoc with @return for expression-bodied function", function()
     local contents = {
@@ -138,7 +138,7 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The add description",
       " *",
@@ -147,7 +147,7 @@ describe("kotlin kdoc", function()
       " * @return The result",
       " */",
       "fun add(a: Int, b: Int): Int = a + b",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
   it("should generate kdoc with @return for function with nullable return type", function()
     local contents = {
@@ -161,7 +161,7 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The find description",
       " *",
@@ -171,7 +171,7 @@ describe("kotlin kdoc", function()
       "fun find(id: Int): String? {",
       "    return null",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
   it("should generate kdoc with @return for function returning function type", function()
     local contents = {
@@ -185,7 +185,7 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The create description",
       " *",
@@ -194,7 +194,7 @@ describe("kotlin kdoc", function()
       "fun create(): (Int) -> String {",
       "    return { it.toString() }",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
   it("should generate kdoc for object", function()
     local contents = {
@@ -207,12 +207,12 @@ describe("kotlin kdoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "/**",
       " * The Singleton description",
       " */",
       "object Singleton {",
       "}",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
 end)

@@ -18,14 +18,14 @@ describe("lua luadoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "--- Description",
       "--- @param a The a",
       "--- @param b The b",
       "local function sample(a, b)",
       "  return a + b",
       "end",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
 
   it("should generate luadoc for variable", function()
@@ -38,9 +38,9 @@ describe("lua luadoc", function()
 
     require("nvim-tree-docs").doc_node_at_cursor()
 
-    assert.same({
+    MiniTest.expect.equality(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), {
       "--- Description",
       "local sample = 42",
-    }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
+    })
   end)
 end)
