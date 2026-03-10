@@ -56,4 +56,5 @@ jobs:
           commit-message: "chore(deps): update ${{ matrix.package }} via nvfetcher"
           title: "chore(deps): update ${{ matrix.package }} via nvfetcher"
           body: Automated update of `${{ matrix.package }}` by nvfetcher.
+          sign-commits: true
           delete-branch: true
