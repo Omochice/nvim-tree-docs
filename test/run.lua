@@ -1,4 +1,4 @@
-vim.cmd("set runtimepath+=" .. vim.fn.getcwd())
+vim.opt.runtimepath:append(vim.fn.getcwd())
 
 require("mini.test").setup({
   collect = {
