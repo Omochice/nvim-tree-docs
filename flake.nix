@@ -152,18 +152,6 @@
             '';
           };
         customInitVim = mkInitVim "";
-        mkWrappedVusted =
-          name: initVim:
-          pkgs.symlinkJoin {
-            inherit name;
-            paths = [ pkgs.lua51Packages.vusted ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              wrapProgram $out/bin/vusted \
-                --set VUSTED_ARGS "--headless --clean -u ${initVim}/init.vim"
-            '';
-          };
-        wrappedVusted = mkWrappedVusted "vusted-custom" customInitVim;
         luacov = pkgs.lua51Packages.luacov;
         luacov-reporter-lcov = sources.luacov-reporter-lcov.src;
         customInitVimWithCoverage =
@@ -175,7 +163,6 @@
             lua package.path = '${luacovPath}/?.lua;${luacovPath}/?/init.lua;${lcovReporterPath}/?.lua;${lcovReporterPath}/?/init.lua;' .. package.path
             lua require("luacov")
           '';
-        wrappedVustedWithCoverage = mkWrappedVusted "vusted-coverage" customInitVimWithCoverage;
         devPackages = rec {
           # keep-sorted start block=yes
           actions = [
@@ -185,8 +172,6 @@
           ];
           neovim = [
             pkgs.neovim
-            # pkgs.lua51Packages.luarocks-nix
-            wrappedVusted
           ];
           nvfetcher = [
             pkgs.nvfetcher
