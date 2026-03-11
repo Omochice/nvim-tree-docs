@@ -71,6 +71,7 @@ local language_specs = {
   kotlin = "kdoc",
   lua = "luadoc",
   typescript = "tsdoc",
+  typst = "tinymist",
 }
 
 --- Cache for documentation data to avoid recomputation
