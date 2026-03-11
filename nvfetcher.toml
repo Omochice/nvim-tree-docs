@@ -3,9 +3,9 @@ fetch.github = "daurnimator/luacov-reporter-lcov"
 src.git = "https://github.com/daurnimator/luacov-reporter-lcov"
 src.branch = "master"
 
-[mini-nvim]
-fetch.github = "echasnovski/mini.nvim"
-src.git = "https://github.com/echasnovski/mini.nvim"
+[mini-test]
+fetch.github = "nvim-mini/mini.test"
+src.git = "https://github.com/nvim-mini/mini.test"
 src.branch = "main"
 
 [nvim-treesitter]

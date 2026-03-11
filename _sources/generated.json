@@ -20,11 +20,11 @@
         },
         "version": "4d881ddb4eeec5ac0cd7d4b7679e3e59f9ac5745"
     },
-    "mini-nvim": {
+    "mini-test": {
         "cargoLock": null,
-        "date": "2026-03-09",
+        "date": "2026-02-21",
         "extract": null,
-        "name": "mini-nvim",
+        "name": "mini-test",
         "passthru": null,
         "pinned": false,
         "src": {
@@ -32,14 +32,14 @@
             "fetchSubmodules": false,
             "leaveDotGit": false,
             "name": null,
-            "owner": "echasnovski",
-            "repo": "mini.nvim",
-            "rev": "9d359222b3643f1fccbd8f3180445842e1cae00b",
-            "sha256": "sha256-uZ4KXLw/0hN/0nY16Oh1zzI5gBSyX5+lcx7frECHT/w=",
+            "owner": "nvim-mini",
+            "repo": "mini.test",
+            "rev": "5e6e317a43c9d315daa4f211939b973f712b77be",
+            "sha256": "sha256-l3wwS3YrmoG+TK+DsDkVJ27doqE+/7rsZS4E+v39fxs=",
             "sparseCheckout": [],
             "type": "github"
         },
-        "version": "9d359222b3643f1fccbd8f3180445842e1cae00b"
+        "version": "5e6e317a43c9d315daa4f211939b973f712b77be"
     },
     "nvim-treesitter": {
         "cargoLock": null,
