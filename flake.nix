@@ -126,8 +126,8 @@
             ++ pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
           }
         );
-        mini-nvim = pkgs.stdenvNoCC.mkDerivation {
-          inherit (sources.mini-nvim) pname version src;
+        mini-test = pkgs.stdenvNoCC.mkDerivation {
+          inherit (sources.mini-test) pname version src;
           doBuild = false;
           buildPhase = ":";
           installPhase = ''
@@ -147,7 +147,7 @@
             destination = "/init.vim";
             text = ''
               set runtimepath+=${nvim-treesitter}
-              set runtimepath+=${mini-nvim}
+              set runtimepath+=${mini-test}
               ${extraConfig}
             '';
           };
