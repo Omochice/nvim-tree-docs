@@ -18,17 +18,17 @@
     };
     date = "2019-11-01";
   };
-  mini-nvim = {
-    pname = "mini-nvim";
-    version = "9d359222b3643f1fccbd8f3180445842e1cae00b";
+  mini-test = {
+    pname = "mini-test";
+    version = "5e6e317a43c9d315daa4f211939b973f712b77be";
     src = fetchFromGitHub {
-      owner = "echasnovski";
-      repo = "mini.nvim";
-      rev = "9d359222b3643f1fccbd8f3180445842e1cae00b";
+      owner = "nvim-mini";
+      repo = "mini.test";
+      rev = "5e6e317a43c9d315daa4f211939b973f712b77be";
       fetchSubmodules = false;
-      sha256 = "sha256-uZ4KXLw/0hN/0nY16Oh1zzI5gBSyX5+lcx7frECHT/w=";
+      sha256 = "sha256-l3wwS3YrmoG+TK+DsDkVJ27doqE+/7rsZS4E+v39fxs=";
     };
-    date = "2026-03-09";
+    date = "2026-02-21";
   };
   nvim-treesitter = {
     pname = "nvim-treesitter";
