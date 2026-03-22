@@ -2,6 +2,10 @@ coverage:
   paths:
     - coverage/luacov.report.out
 
+testExecutionTime:
+  steps:
+    - Run tests with coverage
+
 codeToTestRatio:
   code:
     - "lua/**/*.lua"
