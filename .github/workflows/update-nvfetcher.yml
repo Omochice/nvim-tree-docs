@@ -25,6 +25,7 @@ jobs:
     timeout-minutes: 10
     needs: list-packages
     runs-on: ubuntu-latest
+    environment: renovate
     permissions: {}
     strategy:
       fail-fast: false
