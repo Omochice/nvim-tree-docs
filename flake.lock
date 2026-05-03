@@ -39,6 +39,38 @@
         "type": "github"
       }
     },
+    "luacov-reporter-lcov": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1572605922,
+        "narHash": "sha256-o+9E+pMVpWpd4M0gBnU0g9OA7UZjNbuqFa6WG2j73nE=",
+        "owner": "daurnimator",
+        "repo": "luacov-reporter-lcov",
+        "rev": "4d881ddb4eeec5ac0cd7d4b7679e3e59f9ac5745",
+        "type": "github"
+      },
+      "original": {
+        "owner": "daurnimator",
+        "repo": "luacov-reporter-lcov",
+        "type": "github"
+      }
+    },
+    "mini-test": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775224837,
+        "narHash": "sha256-irVByHeqwK0iRlNw05Aoe9sP7zM58ISaveA5kXnqXUw=",
+        "owner": "echasnovski",
+        "repo": "mini.test",
+        "rev": "4b187876dc134c820677f9e67f0b28910be739ea",
+        "type": "github"
+      },
+      "original": {
+        "owner": "echasnovski",
+        "repo": "mini.test",
+        "type": "github"
+      }
+    },
     "neovim-nightly-overlay": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -131,6 +163,8 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "luacov-reporter-lcov": "luacov-reporter-lcov",
+        "mini-test": "mini-test",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nixpkgs": "nixpkgs_2",
         "nur-packages": "nur-packages",
