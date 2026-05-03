@@ -103,27 +103,10 @@
           };
 
         sources = pkgs.callPackage ./_sources/generated.nix { };
-        nvim-treesitter-raw = pkgs.stdenvNoCC.mkDerivation {
-          inherit (sources.nvim-treesitter) pname version src;
-          doBuild = false;
-          buildPhase = ":";
-          installPhase = ''
-            runHook preInstall
-            mkdir -p $out
-            cp -r . $out/
-            runHook postInstall
-          '';
-          meta = {
-            platforms = pkgs.lib.platforms.all;
-          };
-        };
         nvim-treesitter = (
           pkgs.symlinkJoin {
             name = "nvim-treesitter";
-            paths = [
-              nvim-treesitter-raw
-            ]
-            ++ pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
+            paths = pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
           }
         );
         mini-test = pkgs.stdenvNoCC.mkDerivation {

@@ -7,8 +7,3 @@ src.branch = "master"
 fetch.github = "nvim-mini/mini.test"
 src.git = "https://github.com/nvim-mini/mini.test"
 src.branch = "main"
-
-[nvim-treesitter]
-fetch.github = "nvim-treesitter/nvim-treesitter"
-src.git = "https://github.com/nvim-treesitter/nvim-treesitter"
-src.branch = "main"
