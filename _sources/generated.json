@@ -40,26 +40,5 @@
             "type": "github"
         },
         "version": "5e6e317a43c9d315daa4f211939b973f712b77be"
-    },
-    "nvim-treesitter": {
-        "cargoLock": null,
-        "date": "2026-03-07",
-        "extract": null,
-        "name": "nvim-treesitter",
-        "passthru": null,
-        "pinned": false,
-        "src": {
-            "deepClone": false,
-            "fetchSubmodules": false,
-            "leaveDotGit": false,
-            "name": null,
-            "owner": "nvim-treesitter",
-            "repo": "nvim-treesitter",
-            "rev": "5cb05e1b0fa3c469958a2b26f36b3fe930af221c",
-            "sha256": "sha256-C2LcXM+J+1aJ0RGsIXpRRkWbeqRN00kWWhfkyBqgY2M=",
-            "sparseCheckout": [],
-            "type": "github"
-        },
-        "version": "5cb05e1b0fa3c469958a2b26f36b3fe930af221c"
     }
 }
