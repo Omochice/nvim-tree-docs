@@ -13,6 +13,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    mini-test = {
+      url = "github:echasnovski/mini.test";
+      flake = false;
+    };
+    luacov-reporter-lcov = {
+      url = "github:daurnimator/luacov-reporter-lcov";
+      flake = false;
+    };
   };
 
   outputs =
@@ -23,6 +31,8 @@
       flake-utils,
       nur-packages,
       neovim-nightly-overlay,
+      mini-test,
+      luacov-reporter-lcov,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -37,9 +47,7 @@
         treefmt = treefmt-nix.lib.evalModule pkgs (
           { ... }:
           {
-            settings.global.excludes = [
-              "_sources/**"
-            ];
+            settings.global.excludes = [ ];
             settings.formatter = {
               # keep-sorted start block=yes
               rumdl = {
@@ -102,27 +110,12 @@
             program = "${program}/bin/${name}";
           };
 
-        sources = pkgs.callPackage ./_sources/generated.nix { };
         nvim-treesitter = (
           pkgs.symlinkJoin {
             name = "nvim-treesitter";
             paths = pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
           }
         );
-        mini-test = pkgs.stdenvNoCC.mkDerivation {
-          inherit (sources.mini-test) pname version src;
-          doBuild = false;
-          buildPhase = ":";
-          installPhase = ''
-            runHook preInstall
-            mkdir -p $out
-            cp -r . $out/
-            runHook postInstall
-          '';
-          meta = {
-            platforms = pkgs.lib.platforms.all;
-          };
-        };
         mkInitVim =
           extraConfig:
           pkgs.writeTextFile {
@@ -136,7 +129,6 @@
           };
         customInitVim = mkInitVim "";
         luacov = pkgs.lua51Packages.luacov;
-        luacov-reporter-lcov = sources.luacov-reporter-lcov.src;
         customInitVimWithCoverage =
           let
             luacovPath = "${luacov}/share/lua/5.1";
