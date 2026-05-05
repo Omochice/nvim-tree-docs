@@ -47,9 +47,7 @@
         treefmt = treefmt-nix.lib.evalModule pkgs (
           { ... }:
           {
-            settings.global.excludes = [
-              "_sources/**"
-            ];
+            settings.global.excludes = [ ];
             settings.formatter = {
               # keep-sorted start block=yes
               rumdl = {
@@ -112,7 +110,6 @@
             program = "${program}/bin/${name}";
           };
 
-        sources = pkgs.callPackage ./_sources/generated.nix { };
         nvim-treesitter = (
           pkgs.symlinkJoin {
             name = "nvim-treesitter";
