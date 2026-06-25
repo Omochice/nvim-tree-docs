@@ -58,11 +58,11 @@
     "mini-test": {
       "flake": false,
       "locked": {
-        "lastModified": 1781886001,
-        "narHash": "sha256-HJ7ReZLcHPaL0Ts1PzEF5EYsOIEDE/xM6jj3CtzwOOA=",
+        "lastModified": 1782393458,
+        "narHash": "sha256-BO+GBxaAMeXAH0ao4yKipmMiS/ddmHcL0rojo76SjFo=",
         "owner": "echasnovski",
         "repo": "mini.test",
-        "rev": "35c67cb7f2dc697ed0c7c06400fcf29a8a521d7d",
+        "rev": "20e7de660471c09c29116c74395427c380a8dd4a",
         "type": "github"
       },
       "original": {
